@@ -9,6 +9,8 @@ const app = express();
 app.use(express.json()); // Allows us to accept JSON data in the body
 app.use(cors()); // Allows our React frontend to talk to this backend
 
+const listingsRoutes = require("./routes/listings");
+app.use("/api/listings", listingsRoutes);
 const connectDB = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI);

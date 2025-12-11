@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const { type } = require("os");
-const ListingSchema = new mangoose.Schema({
+const ListingSchema = new mongoose.Schema({
   title: {
     type: String,
     required: [true, "Please add a title"],
