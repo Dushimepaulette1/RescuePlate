@@ -1,7 +1,8 @@
-import { Routes, Route } from 'react-router-dom'
-import Login from './pages/Login'
-import Register from './pages/Register'
-import Home from './pages/Home'
+import { Routes, Route } from "react-router-dom";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Home from "./pages/Home";
+import VendorDashboard from "./pages/VendorDashboard";
 
 function App() {
   return (
@@ -10,10 +11,10 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/vendor-dashboard" element={<VendorDashboard />} />
       </Routes>
     </div>
-  )
+  );
 }
 
-
-export default App
+export default App;
