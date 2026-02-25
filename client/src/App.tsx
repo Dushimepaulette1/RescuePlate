@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Home from "./pages/Home";
@@ -8,6 +8,9 @@ import ContactUs from "./pages/ContactUs";
 import Footer from "./components/Footer";
 
 function App() {
+  const location = useLocation();
+  const hideFooter = ["/login", "/register"].includes(location.pathname);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex flex-col">
       <div className="flex-grow">
@@ -20,7 +23,7 @@ function App() {
           <Route path="/vendor-dashboard" element={<VendorDashboard />} />
         </Routes>
       </div>
-      <Footer />
+      {!hideFooter && <Footer />}
     </div>
   );
 }
