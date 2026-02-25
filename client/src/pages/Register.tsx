@@ -2,6 +2,11 @@ import { useState, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { AuthContext } from "../context/AuthContext";
+import Card from "../components/Card";
+import Input from "../components/Input";
+import Button from "../components/Button";
+import ErrorAlert from "../components/ErrorAlert";
+import BackButton from "../components/BackButton";
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -45,7 +50,8 @@ const Register = () => {
         transition={{ duration: 0.5 }}
         className="w-full max-w-md"
       >
-        <div className="bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl p-8 border border-white/20">
+        <Card>
+          <BackButton />
           <div className="text-center mb-8">
             <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
               Join RescuePlate
@@ -55,70 +61,38 @@ const Register = () => {
             </p>
           </div>
 
-          {error && (
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="bg-red-500/20 border border-red-500/50 text-red-200 px-4 py-3 rounded-lg mb-6"
-            >
-              {error}
-            </motion.div>
-          )}
+          {error && <ErrorAlert message={error} />}
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label
-                htmlFor="name"
-                className="block text-sm font-medium text-gray-200 mb-2"
-              >
-                Full Name
-              </label>
-              <input
-                id="name"
-                type="text"
-                required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-white placeholder-gray-400 transition"
-                placeholder="Enter your name"
-              />
-            </div>
+            <Input
+              id="name"
+              label="Full Name"
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Enter your name"
+              required
+            />
 
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-gray-200 mb-2"
-              >
-                Email Address
-              </label>
-              <input
-                id="email"
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-white placeholder-gray-400 transition"
-                placeholder="Enter your email"
-              />
-            </div>
+            <Input
+              id="email"
+              label="Email Address"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter your email"
+              required
+            />
 
-            <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-gray-200 mb-2"
-              >
-                Password
-              </label>
-              <input
-                id="password"
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-white placeholder-gray-400 transition"
-                placeholder="Enter your password"
-              />
-            </div>
+            <Input
+              id="password"
+              label="Password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter your password"
+              required
+            />
 
             <div>
               <label className="block text-sm font-medium text-gray-200 mb-3">
@@ -154,15 +128,13 @@ const Register = () => {
               </div>
             </div>
 
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+            <Button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-primary to-secondary text-white py-3 rounded-lg font-semibold hover:shadow-lg hover:shadow-primary/50 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full"
             >
               {loading ? "Creating account..." : "Sign Up"}
-            </motion.button>
+            </Button>
           </form>
 
           <div className="mt-6 text-center">
@@ -176,7 +148,7 @@ const Register = () => {
               </Link>
             </p>
           </div>
-        </div>
+        </Card>
       </motion.div>
     </div>
   );
