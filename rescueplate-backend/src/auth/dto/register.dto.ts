@@ -3,12 +3,12 @@ import { ApiProperty } from '@nestjs/swagger';
 import { UserRole } from '../../users/schemas/user.schema';
 
 export class RegisterDto {
-  @ApiProperty({ example: 'John Doe', description: 'User full name' })
+  @ApiProperty({ example: 'Dushime Paulette', description: 'User full name' })
   @IsString()
   @IsNotEmpty()
   name: string;
 
-  @ApiProperty({ example: 'john@example.com', description: 'User email address' })
+  @ApiProperty({ example: 'paulette@example.com', description: 'User email address' })
   @IsEmail()
   @IsNotEmpty()
   email: string;

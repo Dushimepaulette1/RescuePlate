@@ -50,7 +50,7 @@ export class ListingsService {
     const listing = await this.listingModel.findById(id).exec();
 
     if (!listing) {
-      throw new NotFoundException(`Listing with ID ${id} not found`);
+      throw new NotFoundException(`The Listing with this ${id} was not found`);
     }
 
     if (listing.vendorId.toString() !== userId) {
@@ -72,7 +72,7 @@ export class ListingsService {
     const listing = await this.listingModel.findById(id).exec();
 
     if (!listing) {
-      throw new NotFoundException(`Listing with ID ${id} not found`);
+      throw new NotFoundException(`Listing with this ${id} was not found`);
     }
 
     if (listing.vendorId.toString() !== userId) {
