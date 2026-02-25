@@ -7,6 +7,9 @@ export default {
         secondary: "#FFA500",
         dark: "#1a1a1a",
       },
+      fontFamily: {
+        sans: ['Poppins', 'sans-serif'],
+      },
     },
   },
   plugins: [],
