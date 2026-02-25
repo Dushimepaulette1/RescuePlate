@@ -57,7 +57,19 @@ const Home = () => {
             >
               RescuePlate
             </Link>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-6">
+              <Link
+                to="/about"
+                className="text-white hover:text-primary transition font-medium"
+              >
+                About
+              </Link>
+              <Link
+                to="/contact"
+                className="text-white hover:text-primary transition font-medium"
+              >
+                Contact
+              </Link>
               {user ? (
                 <>
                   <span className="text-gray-300">Welcome, {user.name}</span>
@@ -146,6 +158,57 @@ const Home = () => {
           </motion.div>
         </div>
       </section>
+
+      {/* Features Section */}
+      {!user && (
+        <section className="py-16 px-4">
+          <div className="max-w-7xl mx-auto">
+            <h2 className="text-4xl font-bold text-white mb-4 text-center">
+              Why Choose RescuePlate?
+            </h2>
+            <p className="text-gray-400 text-center mb-12">
+              Join thousands of people reducing food waste while saving money
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {[
+                {
+                  icon: "🍽️",
+                  title: "Quality Food",
+                  description:
+                    "Get delicious meals from top local restaurants at amazing prices",
+                },
+                {
+                  icon: "💰",
+                  title: "Save Money",
+                  description:
+                    "Enjoy up to 70% off on surplus food that would otherwise go to waste",
+                },
+                {
+                  icon: "🌍",
+                  title: "Help Planet",
+                  description:
+                    "Reduce food waste and make a positive impact on the environment",
+                },
+              ].map((feature, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.2 }}
+                  className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/20 hover:border-primary/50 transition-all text-center"
+                >
+                  <div className="text-5xl mb-4">{feature.icon}</div>
+                  <h3 className="text-xl font-bold text-white mb-3">
+                    {feature.title}
+                  </h3>
+                  <p className="text-gray-300">{feature.description}</p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       <section className="py-16 px-4">
         <div className="max-w-7xl mx-auto">
