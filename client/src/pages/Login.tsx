@@ -23,9 +23,39 @@ const Login = () => {
 
   const { login } = authContext;
 
+  const validateEmail = (email: string): string | null => {
+    if (!email) {
+      return "Email is required";
+    }
+    if (!email.includes("@")) {
+      return "Please enter a valid email address with @";
+    }
+    const emailParts = email.split("@");
+    if (emailParts[1] === "" || !emailParts[1]) {
+      return "Please enter the domain after @";
+    }
+    if (!emailParts[1].includes(".")) {
+      return "Please enter a valid email domain (e.g., gmail.com)";
+    }
+    return null;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+
+    // Client-side validation
+    const emailError = validateEmail(email);
+    if (emailError) {
+      setError(emailError);
+      return;
+    }
+
+    if (!password) {
+      setError("Password is required");
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -59,15 +89,15 @@ const Login = () => {
 
           {error && <ErrorAlert message={error} />}
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6" noValidate>
             <Input
               id="email"
               label="Email Address"
-              type="email"
+              type="text"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your email"
-              required
+              required={false}
             />
 
             <Input
@@ -77,14 +107,10 @@ const Login = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter your password"
-              required
+              required={false}
             />
 
-            <Button
-              type="submit"
-              disabled={loading}
-              className="w-full"
-            >
+            <Button type="submit" disabled={loading} className="w-full">
               {loading ? "Logging in..." : "Login"}
             </Button>
           </form>
