@@ -5,9 +5,8 @@ const AboutUs = () => {
   return (
     <div className="min-h-screen">
       {/* Hero Section with Breadcrumbs */}
-      <section className="relative py-16 px-4 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-secondary/10"></div>
-        <div className="max-w-7xl mx-auto relative z-10">
+      <section className="py-16 px-4">
+        <div className="max-w-7xl mx-auto">
           {/* Back to Home Button */}
           <Link
             to="/"
@@ -80,7 +79,7 @@ const AboutUs = () => {
       </section>
 
       {/* Stats and Skills Section */}
-      <section className="py-16 px-4 bg-black/20">
+      <section className="py-16 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
             {/* Skills */}
@@ -200,9 +199,8 @@ const AboutUs = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="relative py-24 px-4 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-secondary/20"></div>
-        <div className="max-w-4xl mx-auto relative z-10 text-center">
+      <section className="py-24 px-4">
+        <div className="max-w-4xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
