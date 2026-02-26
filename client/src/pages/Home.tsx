@@ -183,60 +183,64 @@ const Home = () => {
         </div>
       </nav>
 
-      <section className="relative py-20 px-4 overflow-hidden">
+      {/* Extended Background Container */}
+      <div className="relative overflow-hidden">
+        {/* Background Image that extends to features section */}
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{ backgroundImage: "url(/pizza-hero.jpg)" }}
         ></div>
         <div className="absolute inset-0 bg-black/60"></div>
         <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-secondary/20"></div>
-        <div className="max-w-7xl mx-auto relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-center"
-          >
-            <h1 className="text-6xl md:text-7xl font-bold mb-6 drop-shadow-2xl">
-              <span className="bg-gradient-to-r from-primary via-secondary to-primary bg-clip-text text-transparent">
-                Save Food,
-              </span>
-              <br />
-              <span className="text-white">Save Money</span>
-            </h1>
-            <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
-              Discover delicious meals from local restaurants at discounted
-              prices. Help reduce food waste while enjoying quality food.
-            </p>
-            {!user && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.5 }}
-                className="flex gap-4 justify-center"
-              >
-                <Link
-                  to="/register"
-                  className="bg-gradient-to-r from-primary to-secondary text-white px-8 py-3 rounded-lg font-semibold hover:shadow-lg hover:shadow-primary/50 transition"
-                >
-                  Get Started
-                </Link>
-                <Link
-                  to="/login"
-                  className="bg-white/10 backdrop-blur-sm text-white px-8 py-3 rounded-lg font-semibold hover:bg-white/20 transition"
-                >
-                  Learn More
-                </Link>
-              </motion.div>
-            )}
-          </motion.div>
-        </div>
-      </section>
 
-      {/* Features Section - Auto Slider */}
-      {!user && (
-        <section className="py-20 px-4">
-          <div className="max-w-5xl mx-auto">
+        <section className="relative py-20 px-4 z-10">
+          <div className="max-w-7xl mx-auto relative z-10">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              className="text-center"
+            >
+              <h1 className="text-6xl md:text-7xl font-bold mb-6 drop-shadow-2xl">
+                <span className="bg-gradient-to-r from-primary via-secondary to-primary bg-clip-text text-transparent">
+                  Save Food,
+                </span>
+                <br />
+                <span className="text-white">Save Money</span>
+              </h1>
+              <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
+                Discover delicious meals from local restaurants at discounted
+                prices. Help reduce food waste while enjoying quality food.
+              </p>
+              {!user && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.5 }}
+                  className="flex gap-4 justify-center"
+                >
+                  <Link
+                    to="/register"
+                    className="bg-gradient-to-r from-primary to-secondary text-white px-8 py-3 rounded-lg font-semibold hover:shadow-lg hover:shadow-primary/50 transition"
+                  >
+                    Get Started
+                  </Link>
+                  <Link
+                    to="/login"
+                    className="bg-white/10 backdrop-blur-sm text-white px-8 py-3 rounded-lg font-semibold hover:bg-white/20 transition"
+                  >
+                    Learn More
+                  </Link>
+                </motion.div>
+              )}
+            </motion.div>
+          </div>
+        </section>
+
+        {/* Features Section - Auto Slider */}
+        {!user && (
+          <section className="py-20 px-4 relative" id="features-section">
+            <div className="max-w-5xl mx-auto">
             <h2 className="text-5xl md:text-6xl font-bold text-white mb-6 text-center">
               Why Choose RescuePlate?
             </h2>
@@ -336,8 +340,9 @@ const Home = () => {
           </div>
         </section>
       )}
+      </div>
 
-      <section className="py-16 px-4">
+      <section className="py-16 px-4 relative bg-transparent">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-4xl font-bold text-white mb-4">
