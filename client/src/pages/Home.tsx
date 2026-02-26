@@ -259,7 +259,7 @@ const Home = () => {
                   transition={{ duration: 0.5 }}
                   className="absolute inset-0 flex items-center justify-center"
                 >
-                  <div className="bg-gradient-to-br from-primary/20 to-secondary/20 backdrop-blur-lg rounded-3xl p-12 md:p-16 border-2 border-white/20 hover:border-primary/50 transition-all w-full max-w-3xl shadow-2xl">
+                  <div className="backdrop-blur-lg rounded-3xl p-12 md:p-16 border-2 border-white/20 hover:border-primary/50 transition-all w-full max-w-3xl shadow-2xl">
                     <div className="flex flex-col items-center text-center">
                       <div className="text-primary mb-8">
                         {features[currentSlide].icon}
