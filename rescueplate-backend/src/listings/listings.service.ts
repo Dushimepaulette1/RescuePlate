@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Listing } from './schemas/listing.schema';
@@ -7,9 +11,14 @@ import { UpdateListingDto } from './dto/update-listing.dto';
 
 @Injectable()
 export class ListingsService {
-  constructor(@InjectModel(Listing.name) private listingModel: Model<Listing>) {}
+  constructor(
+    @InjectModel(Listing.name) private listingModel: Model<Listing>,
+  ) {}
 
-  async create(createListingDto: CreateListingDto, vendorId: string): Promise<Listing> {
+  async create(
+    createListingDto: CreateListingDto,
+    vendorId: string,
+  ): Promise<Listing> {
     const newListing = new this.listingModel({
       ...createListingDto,
       vendorId,

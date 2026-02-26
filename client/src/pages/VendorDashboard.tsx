@@ -94,9 +94,9 @@ const VendorDashboard = () => {
       reader.onload = (event) => {
         const img = new Image();
         img.onload = () => {
-          const canvas = document.createElement('canvas');
-          const ctx = canvas.getContext('2d');
-          
+          const canvas = document.createElement("canvas");
+          const ctx = canvas.getContext("2d");
+
           // Set max dimensions
           const MAX_WIDTH = 800;
           const MAX_HEIGHT = 600;
@@ -121,7 +121,7 @@ const VendorDashboard = () => {
           ctx?.drawImage(img, 0, 0, width, height);
 
           // Convert to base64 with reduced quality
-          const compressedImage = canvas.toDataURL('image/jpeg', 0.7);
+          const compressedImage = canvas.toDataURL("image/jpeg", 0.7);
           setFormData((prev) => ({ ...prev, image: compressedImage }));
         };
         img.src = event.target?.result as string;
@@ -148,7 +148,7 @@ const VendorDashboard = () => {
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.image) {
       alert("Please upload a food image before creating the listing.");
       return;
@@ -164,20 +164,28 @@ const VendorDashboard = () => {
       });
       await fetchMyListings();
       resetForm();
-      alert("✅ Listing created successfully!\n\nCustomers can now see it in the Available Food section on the homepage.");
+      alert(
+        "✅ Listing created successfully!\n\nCustomers can now see it in the Available Food section on the homepage.",
+      );
     } catch (error: any) {
       console.error("Error creating listing:", error);
       let errorMessage = "Failed to create listing";
-      
-      if (error.response?.status === 413 || error.message?.includes("too large")) {
-        errorMessage = "Image is too large. Please try a smaller image or the system will compress it automatically.";
+
+      if (
+        error.response?.status === 413 ||
+        error.message?.includes("too large")
+      ) {
+        errorMessage =
+          "Image is too large. Please try a smaller image or the system will compress it automatically.";
       } else if (error.response?.data?.message) {
         errorMessage = error.response.data.message;
       } else if (error.message) {
         errorMessage = error.message;
       }
-      
-      alert(`❌ Error: ${errorMessage}\n\nPlease check all fields and try again.`);
+
+      alert(
+        `❌ Error: ${errorMessage}\n\nPlease check all fields and try again.`,
+      );
     }
   };
 
@@ -200,20 +208,28 @@ const VendorDashboard = () => {
       });
       await fetchMyListings();
       resetForm();
-      alert("✅ Listing updated successfully!\n\nThe changes are now visible to customers.");
+      alert(
+        "✅ Listing updated successfully!\n\nThe changes are now visible to customers.",
+      );
     } catch (error: any) {
       console.error("Error updating listing:", error);
       let errorMessage = "Failed to update listing";
-      
-      if (error.response?.status === 413 || error.message?.includes("too large")) {
-        errorMessage = "Image is too large. Please try a smaller image or the system will compress it automatically.";
+
+      if (
+        error.response?.status === 413 ||
+        error.message?.includes("too large")
+      ) {
+        errorMessage =
+          "Image is too large. Please try a smaller image or the system will compress it automatically.";
       } else if (error.response?.data?.message) {
         errorMessage = error.response.data.message;
       } else if (error.message) {
         errorMessage = error.message;
       }
-      
-      alert(`❌ Error: ${errorMessage}\n\nPlease check all fields and try again.`);
+
+      alert(
+        `❌ Error: ${errorMessage}\n\nPlease check all fields and try again.`,
+      );
     }
   };
 
@@ -663,7 +679,10 @@ const VendorDashboard = () => {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                           <label className="block text-sm font-medium text-gray-200 mb-2">
-                            Food Image * {!editingListing && <span className="text-primary">(Required)</span>}
+                            Food Image *{" "}
+                            {!editingListing && (
+                              <span className="text-primary">(Required)</span>
+                            )}
                           </label>
                           <input
                             type="file"
@@ -771,82 +790,82 @@ const VendorDashboard = () => {
                         </div>
                       </div>
                     )}
-                    
+
                     <div className="p-4 sm:p-6">
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="flex-1 min-w-0">
-                        <h3 className="text-lg sm:text-xl font-bold text-white mb-1 break-words">
-                          {listing.title}
-                        </h3>
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-lg sm:text-xl font-bold text-white mb-1 break-words">
+                            {listing.title}
+                          </h3>
+                        </div>
                       </div>
-                    </div>
 
-                    <p className="text-gray-300 mb-4 text-sm sm:text-base break-words">
-                      {listing.description}
-                    </p>
+                      <p className="text-gray-300 mb-4 text-sm sm:text-base break-words">
+                        {listing.description}
+                      </p>
 
-                    <div className="flex items-center gap-2 mb-4 flex-wrap">
-                      <span className="text-xl sm:text-2xl font-bold text-primary">
-                        ${listing.price}
-                      </span>
-                      {listing.originalPrice && (
-                        <>
-                          <span className="text-gray-500 line-through">
-                            ${listing.originalPrice}
-                          </span>
-                          <span className="bg-primary/20 text-primary px-2 py-1 rounded text-xs font-semibold">
-                            {Math.round(
-                              ((listing.originalPrice - listing.price) /
-                                listing.originalPrice) *
-                                100,
-                            )}
-                            % OFF
-                          </span>
-                        </>
-                      )}
-                    </div>
-
-                    <div className="space-y-2 text-sm mb-4">
-                      <div className="text-gray-400 break-words">
-                        <span className="font-semibold text-white">
-                          Quantity:
-                        </span>{" "}
-                        {listing.quantity}
+                      <div className="flex items-center gap-2 mb-4 flex-wrap">
+                        <span className="text-xl sm:text-2xl font-bold text-primary">
+                          ${listing.price}
+                        </span>
+                        {listing.originalPrice && (
+                          <>
+                            <span className="text-gray-500 line-through">
+                              ${listing.originalPrice}
+                            </span>
+                            <span className="bg-primary/20 text-primary px-2 py-1 rounded text-xs font-semibold">
+                              {Math.round(
+                                ((listing.originalPrice - listing.price) /
+                                  listing.originalPrice) *
+                                  100,
+                              )}
+                              % OFF
+                            </span>
+                          </>
+                        )}
                       </div>
-                      <div className="text-gray-400 break-words">
-                        <span className="font-semibold text-white">
-                          Pickup:
-                        </span>{" "}
-                        {listing.pickupTime}
-                      </div>
-                      {listing.phoneNumber && (
+
+                      <div className="space-y-2 text-sm mb-4">
                         <div className="text-gray-400 break-words">
                           <span className="font-semibold text-white">
-                            Contact:
+                            Quantity:
                           </span>{" "}
-                          {listing.phoneNumber}
+                          {listing.quantity}
                         </div>
-                      )}
-                    </div>
+                        <div className="text-gray-400 break-words">
+                          <span className="font-semibold text-white">
+                            Pickup:
+                          </span>{" "}
+                          {listing.pickupTime}
+                        </div>
+                        {listing.phoneNumber && (
+                          <div className="text-gray-400 break-words">
+                            <span className="font-semibold text-white">
+                              Contact:
+                            </span>{" "}
+                            {listing.phoneNumber}
+                          </div>
+                        )}
+                      </div>
 
-                    <div className="flex gap-2">
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => startEdit(listing)}
-                        className="flex-1 bg-primary/20 text-primary py-2 rounded-lg hover:bg-primary/30 transition font-semibold text-sm sm:text-base"
-                      >
-                        Edit
-                      </motion.button>
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => handleDelete(listing._id)}
-                        className="flex-1 bg-red-500/20 text-red-300 py-2 rounded-lg hover:bg-red-500/30 transition font-semibold text-sm sm:text-base"
-                      >
-                        Delete
-                      </motion.button>
-                    </div>
+                      <div className="flex gap-2">
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={() => startEdit(listing)}
+                          className="flex-1 bg-primary/20 text-primary py-2 rounded-lg hover:bg-primary/30 transition font-semibold text-sm sm:text-base"
+                        >
+                          Edit
+                        </motion.button>
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={() => handleDelete(listing._id)}
+                          className="flex-1 bg-red-500/20 text-red-300 py-2 rounded-lg hover:bg-red-500/30 transition font-semibold text-sm sm:text-base"
+                        >
+                          Delete
+                        </motion.button>
+                      </div>
                     </div>
                   </motion.div>
                 ))}

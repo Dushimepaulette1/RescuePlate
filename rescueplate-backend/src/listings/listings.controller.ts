@@ -9,7 +9,12 @@ import {
   UseGuards,
   Request,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { ListingsService } from './listings.service';
 import { CreateListingDto } from './dto/create-listing.dto';
 import { UpdateListingDto } from './dto/update-listing.dto';
@@ -41,8 +46,8 @@ export class ListingsController {
   @UseGuards(JwtAuthGuard)
   @Get('my-listings')
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get current vendor\'s listings' })
-  @ApiResponse({ status: 200, description: 'Returns vendor\'s listings' })
+  @ApiOperation({ summary: "Get current vendor's listings" })
+  @ApiResponse({ status: 200, description: "Returns vendor's listings" })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   findMyListings(@Request() req) {
     const vendorId = req.user.userId;

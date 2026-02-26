@@ -357,92 +357,99 @@ const Home = () => {
                         </div>
                         {listing.pickedUp && (
                           <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                            <span className="text-white font-bold text-xl">PICKED UP</span>
+                            <span className="text-white font-bold text-xl">
+                              PICKED UP
+                            </span>
                           </div>
                         )}
                       </div>
                     )}
 
                     <div className="p-6">
-                    <div className="flex items-start justify-between mb-2">
-                      <div className="flex-1">
-                        <h3 className="text-xl font-bold text-white mb-1">
-                          {listing.title}
-                        </h3>
-                        <p className="text-sm text-gray-400">
-                          Posted by: <span className="text-primary font-semibold">{listing.vendorId.name}</span>
-                        </p>
+                      <div className="flex items-start justify-between mb-2">
+                        <div className="flex-1">
+                          <h3 className="text-xl font-bold text-white mb-1">
+                            {listing.title}
+                          </h3>
+                          <p className="text-sm text-gray-400">
+                            Posted by:{" "}
+                            <span className="text-primary font-semibold">
+                              {listing.vendorId.name}
+                            </span>
+                          </p>
+                        </div>
                       </div>
-                    </div>
 
-                    <p className="text-gray-300 mb-4 line-clamp-2">
-                      {listing.description}
-                    </p>
+                      <p className="text-gray-300 mb-4 line-clamp-2">
+                        {listing.description}
+                      </p>
 
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="flex items-baseline gap-2">
-                        <span className="text-3xl font-bold text-primary">
-                          ${listing.price}
-                        </span>
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-3xl font-bold text-primary">
+                            ${listing.price}
+                          </span>
+                          {listing.originalPrice && (
+                            <span className="text-gray-500 line-through">
+                              ${listing.originalPrice}
+                            </span>
+                          )}
+                        </div>
                         {listing.originalPrice && (
-                          <span className="text-gray-500 line-through">
-                            ${listing.originalPrice}
+                          <span className="bg-primary/20 text-primary px-2 py-1 rounded text-sm font-semibold">
+                            {Math.round(
+                              ((listing.originalPrice - listing.price) /
+                                listing.originalPrice) *
+                                100,
+                            )}
+                            % OFF
                           </span>
                         )}
                       </div>
-                      {listing.originalPrice && (
-                        <span className="bg-primary/20 text-primary px-2 py-1 rounded text-sm font-semibold">
-                          {Math.round(
-                            ((listing.originalPrice - listing.price) /
-                              listing.originalPrice) *
-                              100,
-                          )}
-                          % OFF
-                        </span>
-                      )}
-                    </div>
 
-                    <div className="space-y-2 text-sm mb-4">
-                      <div className="flex items-center text-gray-400">
-                        <span className="font-semibold text-white mr-2">
-                          Quantity:
-                        </span>
-                        {listing.quantity}
-                      </div>
-                      <div className="flex items-center text-gray-400">
-                        <span className="font-semibold text-white mr-2">
-                          Pickup:
-                        </span>
-                        {listing.pickupTime}
-                      </div>
-                      {(listing.phoneNumber || listing.vendorId.phoneNumber) && (
+                      <div className="space-y-2 text-sm mb-4">
                         <div className="flex items-center text-gray-400">
                           <span className="font-semibold text-white mr-2">
-                            Contact:
+                            Quantity:
                           </span>
-                          <a 
-                            href={`tel:${listing.phoneNumber || listing.vendorId.phoneNumber}`}
-                            className="text-primary hover:text-secondary transition"
-                          >
-                            {listing.phoneNumber || listing.vendorId.phoneNumber}
-                          </a>
+                          {listing.quantity}
                         </div>
-                      )}
-                    </div>
+                        <div className="flex items-center text-gray-400">
+                          <span className="font-semibold text-white mr-2">
+                            Pickup:
+                          </span>
+                          {listing.pickupTime}
+                        </div>
+                        {(listing.phoneNumber ||
+                          listing.vendorId.phoneNumber) && (
+                          <div className="flex items-center text-gray-400">
+                            <span className="font-semibold text-white mr-2">
+                              Contact:
+                            </span>
+                            <a
+                              href={`tel:${listing.phoneNumber || listing.vendorId.phoneNumber}`}
+                              className="text-primary hover:text-secondary transition"
+                            >
+                              {listing.phoneNumber ||
+                                listing.vendorId.phoneNumber}
+                            </a>
+                          </div>
+                        )}
+                      </div>
 
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={() => handlePickup(listing._id)}
-                      disabled={listing.pickedUp}
-                      className={`w-full py-3 rounded-lg font-semibold transition ${
-                        listing.pickedUp
-                          ? "bg-gray-500/20 text-gray-400 cursor-not-allowed"
-                          : "bg-gradient-to-r from-primary to-secondary text-white hover:shadow-lg hover:shadow-primary/50"
-                      }`}
-                    >
-                      {listing.pickedUp ? "Already Picked Up" : "Pickup"}
-                    </motion.button>
+                      <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => handlePickup(listing._id)}
+                        disabled={listing.pickedUp}
+                        className={`w-full py-3 rounded-lg font-semibold transition ${
+                          listing.pickedUp
+                            ? "bg-gray-500/20 text-gray-400 cursor-not-allowed"
+                            : "bg-gradient-to-r from-primary to-secondary text-white hover:shadow-lg hover:shadow-primary/50"
+                        }`}
+                      >
+                        {listing.pickedUp ? "Already Picked Up" : "Pickup"}
+                      </motion.button>
                     </div>
                   </motion.div>
                 ))}

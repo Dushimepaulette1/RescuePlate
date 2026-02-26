@@ -1,4 +1,10 @@
-import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { ListingCategory } from '../schemas/listing.schema';
 
@@ -8,7 +14,10 @@ export class CreateListingDto {
   @IsNotEmpty()
   title: string;
 
-  @ApiProperty({ example: 'Fresh pizzas from today, various toppings', description: 'Detailed description of the food' })
+  @ApiProperty({
+    example: 'Fresh pizzas from today, various toppings',
+    description: 'Detailed description of the food',
+  })
   @IsString()
   @IsNotEmpty()
   description: string;
@@ -18,12 +27,21 @@ export class CreateListingDto {
   @IsNotEmpty()
   price: number;
 
-  @ApiProperty({ example: 45.00, description: 'Original price before discount', required: false })
+  @ApiProperty({
+    example: 45.0,
+    description: 'Original price before discount',
+    required: false,
+  })
   @IsNumber()
   @IsOptional()
   originalPrice?: number;
 
-  @ApiProperty({ enum: ListingCategory, example: 'HUMAN', description: 'Category: HUMAN for human consumption or ANIMAL for animal feed' })
+  @ApiProperty({
+    enum: ListingCategory,
+    example: 'HUMAN',
+    description:
+      'Category: HUMAN for human consumption or ANIMAL for animal feed',
+  })
   @IsEnum(ListingCategory)
   category: ListingCategory;
 
@@ -32,17 +50,27 @@ export class CreateListingDto {
   @IsNotEmpty()
   quantity: string;
 
-  @ApiProperty({ example: 'Today 5:00 PM - 6:00 PM', description: 'Pickup time window' })
+  @ApiProperty({
+    example: 'Today 5:00 PM - 6:00 PM',
+    description: 'Pickup time window',
+  })
   @IsString()
   @IsNotEmpty()
   pickupTime: string;
 
-  @ApiProperty({ example: '/images/food1.jpg', description: 'Image path or URL of the food' })
+  @ApiProperty({
+    example: '/images/food1.jpg',
+    description: 'Image path or URL of the food',
+  })
   @IsString()
   @IsNotEmpty()
   image: string;
 
-  @ApiProperty({ example: '+1234567890', description: 'Vendor phone number for pickup coordination', required: false })
+  @ApiProperty({
+    example: '+1234567890',
+    description: 'Vendor phone number for pickup coordination',
+    required: false,
+  })
   @IsString()
   @IsOptional()
   phoneNumber?: string;
