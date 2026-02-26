@@ -114,8 +114,8 @@ const Register = () => {
           className="w-full lg:w-1/2 flex items-end justify-start px-4 py-12 relative h-[95vh]"
         >
           <div className="w-full max-w-xl bg-white rounded-2xl shadow-2xl p-12 mb-20 lg:-ml-48 relative z-10">
-            <Link
-              to="/"
+            <button
+              onClick={() => navigate(-1)}
               className="inline-flex items-center gap-2 text-gray-500 hover:text-primary transition mb-6"
             >
               <svg
@@ -131,8 +131,8 @@ const Register = () => {
                   d="M15 19l-7-7 7-7"
                 />
               </svg>
-              <span>Home</span>
-            </Link>
+              <span>Back</span>
+            </button>
 
             {error && (
               <div className="mb-6">

@@ -1,15 +1,28 @@
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
+import Navbar from "../components/Navbar";
 
 const AboutUs = () => {
+  const navigate = useNavigate();
+  const authContext = useContext(AuthContext);
+
+  if (!authContext) {
+    throw new Error("AuthContext must be used within AuthProvider");
+  }
+
+  const { user, logout } = authContext;
+
   return (
     <div className="min-h-screen">
-      {/* Hero Section with Breadcrumbs */}
+      <Navbar user={user} logout={logout} />
+      {/* Hero Section */}
       <section className="py-16 px-4">
         <div className="max-w-7xl mx-auto">
-          {/* Back to Home Button */}
-          <Link
-            to="/"
+          {/* Back Button */}
+          <button
+            onClick={() => navigate(-1)}
             className="inline-flex items-center gap-2 text-gray-400 hover:text-primary transition-colors mb-8 group"
           >
             <svg
@@ -25,17 +38,8 @@ const AboutUs = () => {
                 d="M15 19l-7-7 7-7"
               />
             </svg>
-            <span className="font-medium">Back to Home</span>
-          </Link>
-
-          {/* Breadcrumbs */}
-          <div className="flex items-center gap-2 text-sm text-gray-400 mb-6">
-            <Link to="/" className="hover:text-primary transition">
-              Home
-            </Link>
-            <span>/</span>
-            <span className="text-white">About Us</span>
-          </div>
+            <span className="font-medium">Back</span>
+          </button>
 
           <motion.div
             initial={{ opacity: 0, y: 30 }}

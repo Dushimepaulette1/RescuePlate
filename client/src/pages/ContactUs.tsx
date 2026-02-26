@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
+import Navbar from "../components/Navbar";
 
 const ContactUs = () => {
   const [name, setName] = useState("");
@@ -8,6 +10,14 @@ const ContactUs = () => {
   const [website, setWebsite] = useState("");
   const [message, setMessage] = useState("");
   const [success, setSuccess] = useState(false);
+  const navigate = useNavigate();
+  const authContext = useContext(AuthContext);
+
+  if (!authContext) {
+    throw new Error("AuthContext must be used within AuthProvider");
+  }
+
+  const { user, logout } = authContext;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,11 +33,13 @@ const ContactUs = () => {
   };
 
   return (
-    <div className="py-12 px-4 md:px-8">
+    <div className="min-h-screen">
+      <Navbar user={user} logout={logout} />
+      <div className="py-12 px-4 md:px-8">
       <div className="max-w-7xl mx-auto">
-        {/* Back to Home Button */}
-        <Link
-          to="/"
+        {/* Back Button */}
+        <button
+          onClick={() => navigate(-1)}
           className="inline-flex items-center gap-2 text-gray-400 hover:text-primary transition-colors mb-8 group"
         >
           <svg
@@ -43,8 +55,8 @@ const ContactUs = () => {
               d="M15 19l-7-7 7-7"
             />
           </svg>
-          <span className="font-medium">Back to Home</span>
-        </Link>
+          <span className="font-medium">Back</span>
+        </button>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
           {/* Left Side - Contact Info */}
@@ -223,6 +235,7 @@ const ContactUs = () => {
             </form>
           </motion.div>
         </div>
+      </div>
       </div>
     </div>
   );
