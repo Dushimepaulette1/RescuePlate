@@ -29,7 +29,6 @@ const Register = () => {
 
   const { register } = authContext;
 
-  // Auto-advance slideshow
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
@@ -57,7 +56,6 @@ const Register = () => {
   return (
     <div className="min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-b from-transparent py-4">
       <div className="flex items-center justify-center w-full max-w-7xl mx-auto">
-        {/* Left Side - Slideshow (50% width, full height) */}
         <motion.div
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
@@ -80,7 +78,6 @@ const Register = () => {
                     backgroundImage: `url('${slides[currentSlide].image}')`,
                   }}
                 >
-                  {/* Text Overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex flex-col justify-end p-8">
                     <h2 className="text-white text-4xl font-bold mb-2">
                       {slides[currentSlide].text}
@@ -92,7 +89,6 @@ const Register = () => {
                   </div>
                 </div>
 
-                {/* Slideshow Dots */}
                 <div className="absolute -bottom-8 left-0 right-0 flex justify-center gap-2">
                   {slides.map((_, index) => (
                     <button
@@ -111,16 +107,13 @@ const Register = () => {
           </AnimatePresence>
         </motion.div>
 
-        {/* Right Side - Sign Up Form (50% width, positioned lower) */}
         <motion.div
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6 }}
           className="w-full lg:w-1/2 flex items-end justify-start px-4 py-12 relative h-[95vh]"
         >
-          {/* Form Card */}
           <div className="w-full max-w-xl bg-white rounded-2xl shadow-2xl p-12 mb-20 lg:-ml-48 relative z-10">
-            {/* Home Link */}
             <Link
               to="/"
               className="inline-flex items-center gap-2 text-gray-500 hover:text-primary transition mb-6"
@@ -148,7 +141,6 @@ const Register = () => {
             )}
 
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Username Input */}
               <div>
                 <label className="block text-sm text-gray-500 mb-2">
                   Username
@@ -163,7 +155,6 @@ const Register = () => {
                 />
               </div>
 
-              {/* Email Input */}
               <div>
                 <label className="block text-sm text-gray-500 mb-2">
                   E-mail
@@ -178,7 +169,6 @@ const Register = () => {
                 />
               </div>
 
-              {/* Password Input */}
               <div>
                 <label className="block text-sm text-gray-500 mb-2">
                   Password
@@ -212,7 +202,6 @@ const Register = () => {
                 </div>
               </div>
 
-              {/* Account Type */}
               <div>
                 <label className="block text-sm text-gray-500 mb-3">
                   Account Type
@@ -247,7 +236,6 @@ const Register = () => {
                 </div>
               </div>
 
-              {/* Submit Button */}
               <button
                 type="submit"
                 disabled={loading}

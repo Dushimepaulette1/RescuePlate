@@ -41,7 +41,6 @@ const Login = () => {
     e.preventDefault();
     setError("");
 
-    // Client-side validation
     const emailError = validateEmail(email);
     if (emailError) {
       setError(emailError);
@@ -70,7 +69,6 @@ const Login = () => {
   return (
     <div className="min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-b from-transparent py-4">
       <div className="flex items-center justify-center w-full max-w-7xl mx-auto">
-        {/* Left Side - Image */}
         <motion.div
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
@@ -89,16 +87,13 @@ const Login = () => {
           </div>
         </motion.div>
 
-        {/* Right Side - Login Form */}
         <motion.div
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6 }}
           className="w-full lg:w-1/2 flex items-end justify-start px-4 py-12 relative h-[95vh]"
         >
-          {/* Form Card */}
           <div className="w-full max-w-xl bg-white rounded-2xl shadow-2xl p-12 mb-20 lg:-ml-48 relative z-10">
-            {/* Home Link */}
             <Link
               to="/"
               className="inline-flex items-center gap-2 text-gray-500 hover:text-primary transition mb-6"
@@ -126,7 +121,6 @@ const Login = () => {
             )}
 
             <form onSubmit={handleSubmit} className="space-y-6" noValidate>
-              {/* Username/Email Input */}
               <div>
                 <label className="block text-sm text-gray-500 mb-2">
                   Username or Email
@@ -141,7 +135,6 @@ const Login = () => {
                 />
               </div>
 
-              {/* Password Input */}
               <div>
                 <label className="block text-sm text-gray-500 mb-2">
                   Password
@@ -175,7 +168,6 @@ const Login = () => {
                 </div>
               </div>
 
-              {/* Sign Up Link */}
               <div className="text-center">
                 <p className="text-gray-600 text-lg">
                   New User?{" "}
@@ -188,7 +180,6 @@ const Login = () => {
                 </p>
               </div>
 
-              {/* Submit Button */}
               <button
                 type="submit"
                 disabled={loading}
