@@ -21,6 +21,7 @@ const VendorDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editingListing, setEditingListing] = useState<Listing | null>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -148,18 +149,132 @@ const VendorDashboard = () => {
     return null;
   }
 
+  const totalListings = listings.length;
+  const humanListings = listings.filter((l) => l.category === "HUMAN").length;
+  const animalListings = listings.filter((l) => l.category === "ANIMAL").length;
+  const totalRevenue = listings.reduce((sum, l) => sum + l.price, 0);
+  const avgDiscount = listings
+    .filter((l) => l.originalPrice)
+    .reduce((sum, l) => {
+      if (l.originalPrice) {
+        return sum + ((l.originalPrice - l.price) / l.originalPrice) * 100;
+      }
+      return sum;
+    }, 0) / listings.filter((l) => l.originalPrice).length || 0;
+
   return (
     <div className="min-h-screen">
       <Navbar user={user} logout={logout} />
 
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-4xl font-bold text-white mb-2">
-              Vendor Dashboard
-            </h1>
-            <p className="text-gray-400">Manage your food listings</p>
-          </div>
+      <div className="flex relative">
+        {sidebarOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSidebarOpen(false)}
+            className="fixed inset-0 bg-black/50 z-30 lg:hidden"
+          />
+        )}
+        
+        <AnimatePresence>
+          {sidebarOpen && (
+            <motion.aside
+              initial={{ x: -300, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: -300, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="fixed left-0 top-20 h-[calc(100vh-5rem)] w-72 bg-white/10 backdrop-blur-lg border-r border-white/20 rounded-tr-3xl rounded-br-3xl p-6 overflow-y-auto z-40 lg:relative lg:top-0 lg:h-auto"
+            >
+              <h2 className="text-2xl font-bold text-white mb-6">Overview</h2>
+              
+              <div className="space-y-4">
+                <div className="bg-gradient-to-br from-primary/20 to-secondary/20 rounded-2xl p-4 border border-primary/30">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-gray-300 text-sm">Total Listings</span>
+                    <svg className="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                  </div>
+                  <p className="text-4xl font-bold text-white">{totalListings}</p>
+                </div>
+
+                <div className="bg-gradient-to-br from-green-500/20 to-green-600/20 rounded-2xl p-4 border border-green-400/30">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-gray-300 text-sm">Human Food</span>
+                    <span className="text-2xl">🍕</span>
+                  </div>
+                  <p className="text-3xl font-bold text-green-300">{humanListings}</p>
+                  <p className="text-xs text-gray-400 mt-1">
+                    {totalListings > 0 ? Math.round((humanListings / totalListings) * 100) : 0}% of total
+                  </p>
+                </div>
+
+                <div className="bg-gradient-to-br from-blue-500/20 to-blue-600/20 rounded-2xl p-4 border border-blue-400/30">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-gray-300 text-sm">Animal Feed</span>
+                    <span className="text-2xl">🐾</span>
+                  </div>
+                  <p className="text-3xl font-bold text-blue-300">{animalListings}</p>
+                  <p className="text-xs text-gray-400 mt-1">
+                    {totalListings > 0 ? Math.round((animalListings / totalListings) * 100) : 0}% of total
+                  </p>
+                </div>
+
+                <div className="bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-2xl p-4 border border-purple-400/30">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-gray-300 text-sm">Total Value</span>
+                    <svg className="w-8 h-8 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <p className="text-3xl font-bold text-purple-300">${totalRevenue.toFixed(2)}</p>
+                  <p className="text-xs text-gray-400 mt-1">Combined listing prices</p>
+                </div>
+
+                {avgDiscount > 0 && (
+                  <div className="bg-gradient-to-br from-orange-500/20 to-red-500/20 rounded-2xl p-4 border border-orange-400/30">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-gray-300 text-sm">Avg. Discount</span>
+                      <svg className="w-8 h-8 text-orange-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                      </svg>
+                    </div>
+                    <p className="text-3xl font-bold text-orange-300">{avgDiscount.toFixed(1)}%</p>
+                    <p className="text-xs text-gray-400 mt-1">Average savings offered</p>
+                  </div>
+                )}
+              </div>
+            </motion.aside>
+          )}
+        </AnimatePresence>
+
+        <div className={`flex-1 transition-all duration-300 ${sidebarOpen ? 'lg:ml-72' : 'ml-0'}`}>
+          <div className="max-w-7xl mx-auto px-4 py-8">
+            <div className="flex justify-between items-center mb-8">
+              <div className="flex items-center gap-4">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setSidebarOpen(!sidebarOpen)}
+                  className="bg-white/10 backdrop-blur-md text-white p-3 rounded-full hover:bg-white/20 transition border border-white/20"
+                  aria-label="Toggle sidebar"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    {sidebarOpen ? (
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+                    ) : (
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                    )}
+                  </svg>
+                </motion.button>
+                <div>
+                  <h1 className="text-4xl font-bold text-white mb-2">
+                    Vendor Dashboard
+                  </h1>
+                  <p className="text-gray-400">Manage your food listings</p>
+                </div>
+              </div>
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -440,6 +555,8 @@ const VendorDashboard = () => {
             ))}
           </div>
         )}
+      </div>
+        </div>
       </div>
     </div>
   );
