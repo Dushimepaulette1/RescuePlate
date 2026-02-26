@@ -31,7 +31,11 @@ const Navbar = ({ user, logout }: NavbarProps) => {
           : "opacity-100 translate-y-0"
       }`}
     >
-      <nav className="bg-white/95 backdrop-blur-md shadow-xl rounded-full max-w-7xl mx-auto">
+      <nav
+        className={`bg-white/95 backdrop-blur-md shadow-xl max-w-7xl mx-auto transition-all ${
+          mobileMenuOpen ? "rounded-2xl" : "rounded-full md:rounded-full"
+        }`}
+      >
         <div className="px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
