@@ -516,24 +516,49 @@ const VendorDashboard = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setShowCreateForm(!showCreateForm)}
-                className="bg-gradient-to-r from-primary to-secondary text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-semibold hover:shadow-lg hover:shadow-primary/50 transition text-sm sm:text-base whitespace-nowrap"
+                className="bg-gradient-to-r from-primary to-secondary text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg hover:shadow-primary/50 transition whitespace-nowrap"
               >
-                {showCreateForm ? "Cancel" : "+ Create Listing"}
+                {showCreateForm ? "✕ Close" : "+ New"}
               </motion.button>
             </div>
 
             <AnimatePresence>
               {showCreateForm && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  exit={{ opacity: 0, height: 0 }}
-                  className="mb-8"
-                >
-                  <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20">
-                    <h2 className="text-2xl font-bold text-white mb-6">
-                      {editingListing ? "Edit Listing" : "Create New Listing"}
-                    </h2>
+                <>
+                  {/* Backdrop blur overlay */}
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    onClick={() => setShowCreateForm(false)}
+                    className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
+                  />
+                  
+                  {/* Modal form */}
+                  <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    className="w-full max-w-4xl max-h-[90vh] overflow-y-auto pointer-events-auto"
+                  >
+                    <div className="bg-gradient-to-br from-gray-900/95 to-black/95 backdrop-blur-xl rounded-2xl p-6 sm:p-8 border border-white/20 shadow-2xl">
+                    <div className="flex items-center justify-between mb-6">
+                      <h2 className="text-2xl font-bold text-white">
+                        {editingListing ? "Edit Listing" : "Create New Listing"}
+                      </h2>
+                      <motion.button
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        onClick={() => setShowCreateForm(false)}
+                        className="text-gray-400 hover:text-white transition p-2 hover:bg-white/10 rounded-full"
+                        type="button"
+                      >
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </motion.button>
+                    </div>
                     <form
                       onSubmit={editingListing ? handleUpdate : handleCreate}
                       className="space-y-4"
@@ -574,7 +599,7 @@ const VendorDashboard = () => {
                                   : "bg-white/5 border-white/10 text-gray-400 hover:border-white/30"
                               }`}
                             >
-                              🍕 Human Consumption
+                              Human Consumption
                             </motion.button>
                             <motion.button
                               whileHover={{ scale: 1.02 }}
@@ -592,7 +617,7 @@ const VendorDashboard = () => {
                                   : "bg-white/5 border-white/10 text-gray-400 hover:border-white/30"
                               }`}
                             >
-                              🐾 Animal Feed
+                              Animal Feed
                             </motion.button>
                           </div>
                         </div>
@@ -740,7 +765,9 @@ const VendorDashboard = () => {
                       </div>
                     </form>
                   </div>
-                </motion.div>
+                  </motion.div>
+                  </div>
+                </>
               )}
             </AnimatePresence>
 
