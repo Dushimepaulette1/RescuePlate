@@ -388,11 +388,11 @@ const Home = () => {
                         <div className="flex items-center gap-3 mb-4">
                           <div className="flex items-baseline gap-2">
                             <span className="text-3xl font-bold text-primary">
-                              ${listing.price}
+                              Rf {listing.price}
                             </span>
                             {listing.originalPrice && (
                               <span className="text-gray-500 line-through">
-                                ${listing.originalPrice}
+                                Rf {listing.originalPrice}
                               </span>
                             )}
                           </div>

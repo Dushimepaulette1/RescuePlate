@@ -441,7 +441,7 @@ const VendorDashboard = () => {
                     </svg>
                   </div>
                   <p className="text-2xl sm:text-3xl font-bold text-white">
-                    ${totalRevenue.toFixed(2)}
+                    Rf {totalRevenue.toFixed(2)}
                   </p>
                   <p className="text-xs text-gray-400 mt-1">
                     Combined listing prices
@@ -662,31 +662,31 @@ const VendorDashboard = () => {
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                               <label className="block text-sm font-medium text-gray-200 mb-2">
-                                Price ($)
+                                Price (Rf)
                               </label>
                               <input
                                 type="number"
                                 name="price"
                                 required
-                                step="0.01"
+                                step="1"
                                 value={formData.price}
                                 onChange={handleInputChange}
                                 className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-white"
-                                placeholder="12.99"
+                                placeholder="5000"
                               />
                             </div>
                             <div>
                               <label className="block text-sm font-medium text-gray-200 mb-2">
-                                Original Price ($) - Optional
+                                Original Price (Rf) - Optional
                               </label>
                               <input
                                 type="number"
                                 name="originalPrice"
-                                step="0.01"
+                                step="1"
                                 value={formData.originalPrice}
                                 onChange={handleInputChange}
                                 className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-white"
-                                placeholder="45.00"
+                                placeholder="8000"
                               />
                             </div>
                           </div>
@@ -867,12 +867,12 @@ const VendorDashboard = () => {
 
                       <div className="flex items-center gap-2 mb-4 flex-wrap">
                         <span className="text-xl sm:text-2xl font-bold text-primary">
-                          ${listing.price}
+                          Rf {listing.price}
                         </span>
                         {listing.originalPrice && (
                           <>
                             <span className="text-gray-500 line-through">
-                              ${listing.originalPrice}
+                              Rf {listing.originalPrice}
                             </span>
                             <span className="bg-primary/20 text-primary px-2 py-1 rounded text-xs font-semibold">
                               {Math.round(
