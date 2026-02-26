@@ -9,7 +9,7 @@ const ErrorAlert = ({ message }: ErrorAlertProps) => {
     <motion.div
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
-      className="bg-red-500/20 border border-red-500/50 text-white font-bold px-4 py-3 rounded-lg mb-6"
+      className="text-red-600 font-bold px-4 py-3 mb-6"
     >
       {message}
     </motion.div>
