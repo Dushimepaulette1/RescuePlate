@@ -183,105 +183,105 @@ const Home = () => {
         {!user && (
           <section className="py-20 px-4 relative" id="features-section">
             <div className="max-w-5xl mx-auto">
-            <h2 className="text-5xl md:text-6xl font-bold text-white mb-6 text-center">
-              Why Choose RescuePlate?
-            </h2>
-            <p className="text-xl text-gray-400 text-center mb-16">
-              Join thousands of people reducing food waste while saving money
-            </p>
+              <h2 className="text-5xl md:text-6xl font-bold text-white mb-6 text-center">
+                Why Choose RescuePlate?
+              </h2>
+              <p className="text-xl text-gray-400 text-center mb-16">
+                Join thousands of people reducing food waste while saving money
+              </p>
 
-            {/* Slider */}
-            <div className="relative h-96 overflow-hidden">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={currentSlide}
-                  initial={{ opacity: 0, x: 100 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -100 }}
-                  transition={{ duration: 0.5 }}
-                  className="absolute inset-0 flex items-center justify-center"
-                >
-                  <div className="backdrop-blur-lg rounded-3xl p-12 md:p-16 border-2 border-white/20 hover:border-primary/50 transition-all w-full max-w-3xl shadow-2xl">
-                    <div className="flex flex-col items-center text-center">
-                      <div className="text-primary mb-8">
-                        {features[currentSlide].icon}
+              {/* Slider */}
+              <div className="relative h-96 overflow-hidden">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={currentSlide}
+                    initial={{ opacity: 0, x: 100 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -100 }}
+                    transition={{ duration: 0.5 }}
+                    className="absolute inset-0 flex items-center justify-center"
+                  >
+                    <div className="backdrop-blur-lg rounded-3xl p-12 md:p-16 border-2 border-white/20 hover:border-primary/50 transition-all w-full max-w-3xl shadow-2xl">
+                      <div className="flex flex-col items-center text-center">
+                        <div className="text-primary mb-8">
+                          {features[currentSlide].icon}
+                        </div>
+                        <h3 className="text-4xl md:text-5xl font-bold text-white mb-6">
+                          {features[currentSlide].title}
+                        </h3>
+                        <p className="text-xl text-gray-300 leading-relaxed">
+                          {features[currentSlide].description}
+                        </p>
                       </div>
-                      <h3 className="text-4xl md:text-5xl font-bold text-white mb-6">
-                        {features[currentSlide].title}
-                      </h3>
-                      <p className="text-xl text-gray-300 leading-relaxed">
-                        {features[currentSlide].description}
-                      </p>
                     </div>
-                  </div>
-                </motion.div>
-              </AnimatePresence>
+                  </motion.div>
+                </AnimatePresence>
 
-              {/* Navigation Dots */}
-              <div className="absolute bottom-8 left-0 right-0 flex justify-center gap-3">
-                {features.map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setCurrentSlide(index)}
-                    className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                      index === currentSlide
-                        ? "bg-primary w-8"
-                        : "bg-white/30 hover:bg-white/50"
-                    }`}
-                    aria-label={`Go to slide ${index + 1}`}
-                  />
-                ))}
+                {/* Navigation Dots */}
+                <div className="absolute bottom-8 left-0 right-0 flex justify-center gap-3">
+                  {features.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentSlide(index)}
+                      className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                        index === currentSlide
+                          ? "bg-primary w-8"
+                          : "bg-white/30 hover:bg-white/50"
+                      }`}
+                      aria-label={`Go to slide ${index + 1}`}
+                    />
+                  ))}
+                </div>
+
+                {/* Arrow Navigation */}
+                <button
+                  onClick={() =>
+                    setCurrentSlide((prev) =>
+                      prev === 0 ? features.length - 1 : prev - 1,
+                    )
+                  }
+                  className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 backdrop-blur-sm p-3 rounded-full transition-all"
+                  aria-label="Previous slide"
+                >
+                  <svg
+                    className="w-6 h-6 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15 19l-7-7 7-7"
+                    />
+                  </svg>
+                </button>
+                <button
+                  onClick={() =>
+                    setCurrentSlide((prev) => (prev + 1) % features.length)
+                  }
+                  className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 backdrop-blur-sm p-3 rounded-full transition-all"
+                  aria-label="Next slide"
+                >
+                  <svg
+                    className="w-6 h-6 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
+                </button>
               </div>
-
-              {/* Arrow Navigation */}
-              <button
-                onClick={() =>
-                  setCurrentSlide((prev) =>
-                    prev === 0 ? features.length - 1 : prev - 1,
-                  )
-                }
-                className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 backdrop-blur-sm p-3 rounded-full transition-all"
-                aria-label="Previous slide"
-              >
-                <svg
-                  className="w-6 h-6 text-white"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 19l-7-7 7-7"
-                  />
-                </svg>
-              </button>
-              <button
-                onClick={() =>
-                  setCurrentSlide((prev) => (prev + 1) % features.length)
-                }
-                className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 backdrop-blur-sm p-3 rounded-full transition-all"
-                aria-label="Next slide"
-              >
-                <svg
-                  className="w-6 h-6 text-white"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
-              </button>
             </div>
-          </div>
-        </section>
-      )}
+          </section>
+        )}
       </div>
 
       <section className="py-16 px-4 relative bg-gradient-to-b from-transparent via-black/20 to-black/30">

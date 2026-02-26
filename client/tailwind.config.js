@@ -8,7 +8,7 @@ export default {
         dark: "#1a1a1a",
       },
       fontFamily: {
-        sans: ['Poppins', 'sans-serif'],
+        sans: ["Poppins", "sans-serif"],
       },
     },
   },

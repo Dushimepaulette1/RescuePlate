@@ -93,29 +93,44 @@ const AboutUs = () => {
               <div className="space-y-6">
                 <div>
                   <div className="flex justify-between mb-2">
-                    <span className="text-white font-medium">Sustainability</span>
+                    <span className="text-white font-medium">
+                      Sustainability
+                    </span>
                     <span className="text-primary font-bold">95%</span>
                   </div>
                   <div className="w-full bg-gray-700 rounded-full h-2">
-                    <div className="bg-gradient-to-r from-primary to-secondary h-2 rounded-full" style={{ width: "95%" }}></div>
+                    <div
+                      className="bg-gradient-to-r from-primary to-secondary h-2 rounded-full"
+                      style={{ width: "95%" }}
+                    ></div>
                   </div>
                 </div>
                 <div>
                   <div className="flex justify-between mb-2">
-                    <span className="text-white font-medium">Community Building</span>
+                    <span className="text-white font-medium">
+                      Community Building
+                    </span>
                     <span className="text-primary font-bold">90%</span>
                   </div>
                   <div className="w-full bg-gray-700 rounded-full h-2">
-                    <div className="bg-gradient-to-r from-primary to-secondary h-2 rounded-full" style={{ width: "90%" }}></div>
+                    <div
+                      className="bg-gradient-to-r from-primary to-secondary h-2 rounded-full"
+                      style={{ width: "90%" }}
+                    ></div>
                   </div>
                 </div>
                 <div>
                   <div className="flex justify-between mb-2">
-                    <span className="text-white font-medium">Affordability</span>
+                    <span className="text-white font-medium">
+                      Affordability
+                    </span>
                     <span className="text-primary font-bold">85%</span>
                   </div>
                   <div className="w-full bg-gray-700 rounded-full h-2">
-                    <div className="bg-gradient-to-r from-primary to-secondary h-2 rounded-full" style={{ width: "85%" }}></div>
+                    <div
+                      className="bg-gradient-to-r from-primary to-secondary h-2 rounded-full"
+                      style={{ width: "85%" }}
+                    ></div>
                   </div>
                 </div>
               </div>
@@ -131,10 +146,14 @@ const AboutUs = () => {
             >
               <div className="text-center">
                 <div className="text-5xl font-bold text-primary mb-2">2+</div>
-                <div className="text-gray-300 font-medium">Years Of Experience</div>
+                <div className="text-gray-300 font-medium">
+                  Years Of Experience
+                </div>
               </div>
               <div className="text-center">
-                <div className="text-5xl font-bold text-primary mb-2">1,000+</div>
+                <div className="text-5xl font-bold text-primary mb-2">
+                  1,000+
+                </div>
                 <div className="text-gray-300 font-medium">Happy Customers</div>
               </div>
               <div className="text-center">
