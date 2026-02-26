@@ -153,11 +153,13 @@ const Home = () => {
       <div className="relative overflow-hidden">
         {/* Background Image that extends to features section */}
         <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat blur-sm"
           style={{ backgroundImage: "url(/pizza-hero.jpg)" }}
         ></div>
         <div className="absolute inset-0 bg-black/60"></div>
         <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-secondary/20"></div>
+        {/* Gradient fade to black from top to bottom */}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/50 to-black"></div>
 
         <section className="relative py-20 px-4 z-10">
           <div className="max-w-7xl mx-auto relative z-10">
@@ -306,177 +308,177 @@ const Home = () => {
             </div>
           </section>
         )}
-      </div>
 
-      <section className="py-16 px-4 relative bg-gradient-to-b from-transparent via-black/20 to-black/30">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-white mb-4">
-              Available Food
-            </h2>
-            <p className="text-gray-400">Fresh listings from local vendors</p>
-          </div>
-
-          {loading ? (
-            <LoadingSpinner />
-          ) : listings.length === 0 ? (
-            <div className="text-center py-20">
-              <p className="text-gray-400 text-xl">
-                No listings available yet. Check back soon!
-              </p>
+        <section className="py-16 px-4 relative z-10">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl font-bold text-white mb-4">
+                Available Food
+              </h2>
+              <p className="text-gray-400">Fresh listings from local vendors</p>
             </div>
-          ) : (
-            <>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {listings.slice(0, displayCount).map((listing, index) => (
-                  <motion.div
-                    key={listing._id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                    className="bg-white/10 backdrop-blur-lg rounded-2xl overflow-hidden border border-white/20 hover:border-primary/50 transition-all hover:shadow-lg hover:shadow-primary/20"
-                  >
-                    {/* Food Image */}
-                    {listing.image && (
-                      <div className="relative h-48 w-full">
-                        <img
-                          src={listing.image}
-                          alt={listing.title}
-                          className="w-full h-full object-cover"
-                        />
-                        <div className="absolute top-3 right-3">
-                          <span
-                            className={`inline-block px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-md ${
-                              listing.category === "HUMAN"
-                                ? "bg-green-500/30 text-green-200 border border-green-400/50"
-                                : "bg-blue-500/30 text-blue-200 border border-blue-400/50"
-                            }`}
-                          >
-                            {listing.category}
-                          </span>
-                        </div>
-                        {listing.pickedUp && (
-                          <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                            <span className="text-white font-bold text-xl">
-                              PICKED UP
+
+            {loading ? (
+              <LoadingSpinner />
+            ) : listings.length === 0 ? (
+              <div className="text-center py-20">
+                <p className="text-gray-400 text-xl">
+                  No listings available yet. Check back soon!
+                </p>
+              </div>
+            ) : (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {listings.slice(0, displayCount).map((listing, index) => (
+                    <motion.div
+                      key={listing._id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                      className="bg-white/10 backdrop-blur-lg rounded-2xl overflow-hidden border border-white/20 hover:border-primary/50 transition-all hover:shadow-lg hover:shadow-primary/20"
+                    >
+                      {/* Food Image */}
+                      {listing.image && (
+                        <div className="relative h-48 w-full">
+                          <img
+                            src={listing.image}
+                            alt={listing.title}
+                            className="w-full h-full object-cover"
+                          />
+                          <div className="absolute top-3 right-3">
+                            <span
+                              className={`inline-block px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-md ${
+                                listing.category === "HUMAN"
+                                  ? "bg-green-500/30 text-green-200 border border-green-400/50"
+                                  : "bg-blue-500/30 text-blue-200 border border-blue-400/50"
+                              }`}
+                            >
+                              {listing.category}
                             </span>
                           </div>
-                        )}
-                      </div>
-                    )}
-
-                    <div className="p-6">
-                      <div className="flex items-start justify-between mb-2">
-                        <div className="flex-1">
-                          <h3 className="text-xl font-bold text-white mb-1">
-                            {listing.title}
-                          </h3>
-                          <p className="text-sm text-gray-400">
-                            Posted by:{" "}
-                            <span className="text-primary font-semibold">
-                              {listing.vendorId.name}
-                            </span>
-                          </p>
+                          {listing.pickedUp && (
+                            <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                              <span className="text-white font-bold text-xl">
+                                PICKED UP
+                              </span>
+                            </div>
+                          )}
                         </div>
-                      </div>
+                      )}
 
-                      <p className="text-gray-300 mb-4 line-clamp-2">
-                        {listing.description}
-                      </p>
+                      <div className="p-6">
+                        <div className="flex items-start justify-between mb-2">
+                          <div className="flex-1">
+                            <h3 className="text-xl font-bold text-white mb-1">
+                              {listing.title}
+                            </h3>
+                            <p className="text-sm text-gray-400">
+                              Posted by:{" "}
+                              <span className="text-primary font-semibold">
+                                {listing.vendorId.name}
+                              </span>
+                            </p>
+                          </div>
+                        </div>
 
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className="flex items-baseline gap-2">
-                          <span className="text-3xl font-bold text-primary">
-                            ${listing.price}
-                          </span>
+                        <p className="text-gray-300 mb-4 line-clamp-2">
+                          {listing.description}
+                        </p>
+
+                        <div className="flex items-center gap-3 mb-4">
+                          <div className="flex items-baseline gap-2">
+                            <span className="text-3xl font-bold text-primary">
+                              ${listing.price}
+                            </span>
+                            {listing.originalPrice && (
+                              <span className="text-gray-500 line-through">
+                                ${listing.originalPrice}
+                              </span>
+                            )}
+                          </div>
                           {listing.originalPrice && (
-                            <span className="text-gray-500 line-through">
-                              ${listing.originalPrice}
+                            <span className="bg-primary/20 text-primary px-2 py-1 rounded text-sm font-semibold">
+                              {Math.round(
+                                ((listing.originalPrice - listing.price) /
+                                  listing.originalPrice) *
+                                  100,
+                              )}
+                              % OFF
                             </span>
                           )}
                         </div>
-                        {listing.originalPrice && (
-                          <span className="bg-primary/20 text-primary px-2 py-1 rounded text-sm font-semibold">
-                            {Math.round(
-                              ((listing.originalPrice - listing.price) /
-                                listing.originalPrice) *
-                                100,
-                            )}
-                            % OFF
-                          </span>
-                        )}
-                      </div>
 
-                      <div className="space-y-2 text-sm mb-4">
-                        <div className="flex items-center text-gray-400">
-                          <span className="font-semibold text-white mr-2">
-                            Quantity:
-                          </span>
-                          {listing.quantity}
-                        </div>
-                        <div className="flex items-center text-gray-400">
-                          <span className="font-semibold text-white mr-2">
-                            Pickup:
-                          </span>
-                          {listing.pickupTime}
-                        </div>
-                        {(listing.phoneNumber ||
-                          listing.vendorId.phoneNumber) && (
+                        <div className="space-y-2 text-sm mb-4">
                           <div className="flex items-center text-gray-400">
                             <span className="font-semibold text-white mr-2">
-                              Contact:
+                              Quantity:
                             </span>
-                            <a
-                              href={`tel:${listing.phoneNumber || listing.vendorId.phoneNumber}`}
-                              className="text-primary hover:text-secondary transition"
-                            >
-                              {listing.phoneNumber ||
-                                listing.vendorId.phoneNumber}
-                            </a>
+                            {listing.quantity}
                           </div>
-                        )}
+                          <div className="flex items-center text-gray-400">
+                            <span className="font-semibold text-white mr-2">
+                              Pickup:
+                            </span>
+                            {listing.pickupTime}
+                          </div>
+                          {(listing.phoneNumber ||
+                            listing.vendorId.phoneNumber) && (
+                            <div className="flex items-center text-gray-400">
+                              <span className="font-semibold text-white mr-2">
+                                Contact:
+                              </span>
+                              <a
+                                href={`tel:${listing.phoneNumber || listing.vendorId.phoneNumber}`}
+                                className="text-primary hover:text-secondary transition"
+                              >
+                                {listing.phoneNumber ||
+                                  listing.vendorId.phoneNumber}
+                              </a>
+                            </div>
+                          )}
+                        </div>
+
+                        <motion.button
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={() => handlePickup(listing._id)}
+                          disabled={listing.pickedUp}
+                          className={`w-full py-3 rounded-lg font-semibold transition ${
+                            listing.pickedUp
+                              ? "bg-gray-500/20 text-gray-400 cursor-not-allowed"
+                              : "bg-gradient-to-r from-primary to-secondary text-white hover:shadow-lg hover:shadow-primary/50"
+                          }`}
+                        >
+                          {listing.pickedUp ? "Already Picked Up" : "Pickup"}
+                        </motion.button>
                       </div>
+                    </motion.div>
+                  ))}
+                </div>
 
-                      <motion.button
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={() => handlePickup(listing._id)}
-                        disabled={listing.pickedUp}
-                        className={`w-full py-3 rounded-lg font-semibold transition ${
-                          listing.pickedUp
-                            ? "bg-gray-500/20 text-gray-400 cursor-not-allowed"
-                            : "bg-gradient-to-r from-primary to-secondary text-white hover:shadow-lg hover:shadow-primary/50"
-                        }`}
-                      >
-                        {listing.pickedUp ? "Already Picked Up" : "Pickup"}
-                      </motion.button>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-
-              {/* Load More Button */}
-              {displayCount < listings.length && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="text-center mt-12"
-                >
-                  <button
-                    onClick={() => setDisplayCount((prev) => prev + 9)}
-                    className="bg-gradient-to-r from-primary to-secondary text-white px-8 py-4 rounded-full font-semibold text-lg hover:shadow-lg hover:shadow-primary/50 transition-all transform hover:scale-105"
+                {/* Load More Button */}
+                {displayCount < listings.length && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="text-center mt-12"
                   >
-                    Load More Listings
-                  </button>
-                  <p className="text-gray-400 mt-4 text-sm">
-                    Showing {displayCount} of {listings.length} listings
-                  </p>
-                </motion.div>
-              )}
-            </>
-          )}
-        </div>
-      </section>
+                    <button
+                      onClick={() => setDisplayCount((prev) => prev + 9)}
+                      className="bg-gradient-to-r from-primary to-secondary text-white px-8 py-4 rounded-full font-semibold text-lg hover:shadow-lg hover:shadow-primary/50 transition-all transform hover:scale-105"
+                    >
+                      Load More Listings
+                    </button>
+                    <p className="text-gray-400 mt-4 text-sm">
+                      Showing {displayCount} of {listings.length} listings
+                    </p>
+                  </motion.div>
+                )}
+              </>
+            )}
+          </div>
+        </section>
+      </div>
     </div>
   );
 };
