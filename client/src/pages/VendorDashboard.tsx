@@ -31,6 +31,7 @@ const VendorDashboard = () => {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editingListing, setEditingListing] = useState<Listing | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -154,6 +155,7 @@ const VendorDashboard = () => {
       return;
     }
 
+    setSubmitting(true);
     try {
       await api.post("/listings", {
         ...formData,
@@ -186,6 +188,8 @@ const VendorDashboard = () => {
       alert(
         `❌ Error: ${errorMessage}\n\nPlease check all fields and try again.`,
       );
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -198,6 +202,7 @@ const VendorDashboard = () => {
       return;
     }
 
+    setSubmitting(true);
     try {
       await api.patch(`/listings/${editingListing._id}`, {
         ...formData,
@@ -230,6 +235,8 @@ const VendorDashboard = () => {
       alert(
         `❌ Error: ${errorMessage}\n\nPlease check all fields and try again.`,
       );
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -533,239 +540,266 @@ const VendorDashboard = () => {
                     onClick={() => setShowCreateForm(false)}
                     className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
                   />
-                  
+
                   {/* Modal form */}
                   <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    className="w-full max-w-4xl max-h-[90vh] overflow-y-auto pointer-events-auto"
-                  >
-                    <div className="bg-gradient-to-br from-gray-900/95 to-black/95 backdrop-blur-xl rounded-2xl p-6 sm:p-8 border border-white/20 shadow-2xl">
-                    <div className="flex items-center justify-between mb-6">
-                      <h2 className="text-2xl font-bold text-white">
-                        {editingListing ? "Edit Listing" : "Create New Listing"}
-                      </h2>
-                      <motion.button
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                        onClick={() => setShowCreateForm(false)}
-                        className="text-gray-400 hover:text-white transition p-2 hover:bg-white/10 rounded-full"
-                        type="button"
-                      >
-                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                      </motion.button>
-                    </div>
-                    <form
-                      onSubmit={editingListing ? handleUpdate : handleCreate}
-                      className="space-y-4"
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      className="w-full max-w-4xl max-h-[90vh] overflow-y-auto pointer-events-auto"
                     >
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-200 mb-2">
-                            Title
-                          </label>
-                          <input
-                            type="text"
-                            name="title"
-                            required
-                            value={formData.title}
-                            onChange={handleInputChange}
-                            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-white"
-                            placeholder="e.g., 5 Large Pizzas"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-200 mb-2">
-                            Category
-                          </label>
-                          <div className="grid grid-cols-2 gap-3">
-                            <motion.button
-                              whileHover={{ scale: 1.02 }}
-                              whileTap={{ scale: 0.98 }}
-                              type="button"
-                              onClick={() =>
-                                setFormData((prev) => ({
-                                  ...prev,
-                                  category: "HUMAN",
-                                }))
-                              }
-                              className={`py-3 px-4 rounded-lg border-2 transition font-semibold ${
-                                formData.category === "HUMAN"
-                                  ? "bg-green-500/20 border-green-400 text-green-300"
-                                  : "bg-white/5 border-white/10 text-gray-400 hover:border-white/30"
-                              }`}
+                      <div className="bg-gradient-to-br from-gray-900/95 to-black/95 backdrop-blur-xl rounded-2xl p-6 sm:p-8 border border-white/20 shadow-2xl">
+                        <div className="flex items-center justify-between mb-6">
+                          <h2 className="text-2xl font-bold text-white">
+                            {editingListing
+                              ? "Edit Listing"
+                              : "Create New Listing"}
+                          </h2>
+                          <motion.button
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                            onClick={() => setShowCreateForm(false)}
+                            className="text-gray-400 hover:text-white transition p-2 hover:bg-white/10 rounded-full"
+                            type="button"
+                          >
+                            <svg
+                              className="w-6 h-6"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
                             >
-                              Human Consumption
-                            </motion.button>
-                            <motion.button
-                              whileHover={{ scale: 1.02 }}
-                              whileTap={{ scale: 0.98 }}
-                              type="button"
-                              onClick={() =>
-                                setFormData((prev) => ({
-                                  ...prev,
-                                  category: "ANIMAL",
-                                }))
-                              }
-                              className={`py-3 px-4 rounded-lg border-2 transition font-semibold ${
-                                formData.category === "ANIMAL"
-                                  ? "bg-blue-500/20 border-blue-400 text-blue-300"
-                                  : "bg-white/5 border-white/10 text-gray-400 hover:border-white/30"
-                              }`}
-                            >
-                              Animal Feed
-                            </motion.button>
-                          </div>
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M6 18L18 6M6 6l12 12"
+                              />
+                            </svg>
+                          </motion.button>
                         </div>
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-200 mb-2">
-                          Description
-                        </label>
-                        <textarea
-                          name="description"
-                          required
-                          value={formData.description}
-                          onChange={handleInputChange}
-                          rows={3}
-                          className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-white"
-                          placeholder="Describe your food..."
-                        />
-                      </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-200 mb-2">
-                            Price ($)
-                          </label>
-                          <input
-                            type="number"
-                            name="price"
-                            required
-                            step="0.01"
-                            value={formData.price}
-                            onChange={handleInputChange}
-                            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-white"
-                            placeholder="12.99"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-200 mb-2">
-                            Original Price ($) - Optional
-                          </label>
-                          <input
-                            type="number"
-                            name="originalPrice"
-                            step="0.01"
-                            value={formData.originalPrice}
-                            onChange={handleInputChange}
-                            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-white"
-                            placeholder="45.00"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-200 mb-2">
-                            Quantity
-                          </label>
-                          <input
-                            type="text"
-                            name="quantity"
-                            required
-                            value={formData.quantity}
-                            onChange={handleInputChange}
-                            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-white"
-                            placeholder="5 boxes"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-200 mb-2">
-                            Pickup Time
-                          </label>
-                          <input
-                            type="text"
-                            name="pickupTime"
-                            required
-                            value={formData.pickupTime}
-                            onChange={handleInputChange}
-                            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-white"
-                            placeholder="Today 5:00 PM - 6:00 PM"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-200 mb-2">
-                            Food Image *{" "}
-                            {!editingListing && (
-                              <span className="text-primary">(Required)</span>
-                            )}
-                          </label>
-                          <input
-                            type="file"
-                            accept="image/*"
-                            onChange={handleImageUpload}
-                            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-secondary file:cursor-pointer"
-                          />
-                          <p className="text-xs text-gray-400 mt-1">
-                            Upload a clear image of your food item
-                          </p>
-                          {formData.image && (
-                            <div className="mt-3">
-                              <img
-                                src={formData.image}
-                                alt="Preview"
-                                className="w-full h-40 object-cover rounded-lg border border-white/20"
+                        <form
+                          onSubmit={
+                            editingListing ? handleUpdate : handleCreate
+                          }
+                          className="space-y-4"
+                        >
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                              <label className="block text-sm font-medium text-gray-200 mb-2">
+                                Title
+                              </label>
+                              <input
+                                type="text"
+                                name="title"
+                                required
+                                value={formData.title}
+                                onChange={handleInputChange}
+                                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-white"
+                                placeholder="e.g., 5 Large Pizzas"
                               />
                             </div>
-                          )}
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-200 mb-2">
-                            Contact Phone Number
-                          </label>
-                          <input
-                            type="tel"
-                            name="phoneNumber"
-                            value={formData.phoneNumber}
-                            onChange={handleInputChange}
-                            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-white"
-                            placeholder="+1 (234) 567-8900"
-                          />
-                          <p className="text-xs text-gray-400 mt-1">
-                            For customers to contact you for pickup
-                          </p>
-                        </div>
-                      </div>
+                            <div>
+                              <label className="block text-sm font-medium text-gray-200 mb-2">
+                                Category
+                              </label>
+                              <div className="grid grid-cols-2 gap-3">
+                                <motion.button
+                                  whileHover={{ scale: 1.02 }}
+                                  whileTap={{ scale: 0.98 }}
+                                  type="button"
+                                  onClick={() =>
+                                    setFormData((prev) => ({
+                                      ...prev,
+                                      category: "HUMAN",
+                                    }))
+                                  }
+                                  className={`py-3 px-4 rounded-lg border-2 transition font-semibold ${
+                                    formData.category === "HUMAN"
+                                      ? "bg-green-500/20 border-green-400 text-green-300"
+                                      : "bg-white/5 border-white/10 text-gray-400 hover:border-white/30"
+                                  }`}
+                                >
+                                  Human Consumption
+                                </motion.button>
+                                <motion.button
+                                  whileHover={{ scale: 1.02 }}
+                                  whileTap={{ scale: 0.98 }}
+                                  type="button"
+                                  onClick={() =>
+                                    setFormData((prev) => ({
+                                      ...prev,
+                                      category: "ANIMAL",
+                                    }))
+                                  }
+                                  className={`py-3 px-4 rounded-lg border-2 transition font-semibold ${
+                                    formData.category === "ANIMAL"
+                                      ? "bg-blue-500/20 border-blue-400 text-blue-300"
+                                      : "bg-white/5 border-white/10 text-gray-400 hover:border-white/30"
+                                  }`}
+                                >
+                                  Animal Feed
+                                </motion.button>
+                              </div>
+                            </div>
+                          </div>
 
-                      <div className="flex gap-4">
-                        <motion.button
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
-                          type="submit"
-                          className="flex-1 bg-gradient-to-r from-primary to-secondary text-white py-3 rounded-lg font-semibold hover:shadow-lg hover:shadow-primary/50 transition"
-                        >
-                          {editingListing ? "Update Listing" : "Create Listing"}
-                        </motion.button>
-                        <button
-                          type="button"
-                          onClick={resetForm}
-                          className="px-6 py-3 bg-white/10 text-white rounded-lg hover:bg-white/20 transition"
-                        >
-                          Cancel
-                        </button>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-200 mb-2">
+                              Description
+                            </label>
+                            <textarea
+                              name="description"
+                              required
+                              value={formData.description}
+                              onChange={handleInputChange}
+                              rows={3}
+                              className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-white"
+                              placeholder="Describe your food..."
+                            />
+                          </div>
+
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                              <label className="block text-sm font-medium text-gray-200 mb-2">
+                                Price ($)
+                              </label>
+                              <input
+                                type="number"
+                                name="price"
+                                required
+                                step="0.01"
+                                value={formData.price}
+                                onChange={handleInputChange}
+                                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-white"
+                                placeholder="12.99"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-sm font-medium text-gray-200 mb-2">
+                                Original Price ($) - Optional
+                              </label>
+                              <input
+                                type="number"
+                                name="originalPrice"
+                                step="0.01"
+                                value={formData.originalPrice}
+                                onChange={handleInputChange}
+                                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-white"
+                                placeholder="45.00"
+                              />
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                              <label className="block text-sm font-medium text-gray-200 mb-2">
+                                Quantity
+                              </label>
+                              <input
+                                type="text"
+                                name="quantity"
+                                required
+                                value={formData.quantity}
+                                onChange={handleInputChange}
+                                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-white"
+                                placeholder="5 boxes"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-sm font-medium text-gray-200 mb-2">
+                                Pickup Time
+                              </label>
+                              <input
+                                type="text"
+                                name="pickupTime"
+                                required
+                                value={formData.pickupTime}
+                                onChange={handleInputChange}
+                                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-white"
+                                placeholder="Today 5:00 PM - 6:00 PM"
+                              />
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                              <label className="block text-sm font-medium text-gray-200 mb-2">
+                                Food Image *{" "}
+                                {!editingListing && (
+                                  <span className="text-primary">
+                                    (Required)
+                                  </span>
+                                )}
+                              </label>
+                              <input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleImageUpload}
+                                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-secondary file:cursor-pointer"
+                              />
+                              <p className="text-xs text-gray-400 mt-1">
+                                Upload a clear image of your food item
+                              </p>
+                              {formData.image && (
+                                <div className="mt-3">
+                                  <img
+                                    src={formData.image}
+                                    alt="Preview"
+                                    className="w-full h-40 object-cover rounded-lg border border-white/20"
+                                  />
+                                </div>
+                              )}
+                            </div>
+                            <div>
+                              <label className="block text-sm font-medium text-gray-200 mb-2">
+                                Contact Phone Number
+                              </label>
+                              <input
+                                type="tel"
+                                name="phoneNumber"
+                                value={formData.phoneNumber}
+                                onChange={handleInputChange}
+                                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-white"
+                                placeholder="+1 (234) 567-8900"
+                              />
+                              <p className="text-xs text-gray-400 mt-1">
+                                For customers to contact you for pickup
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="flex gap-4">
+                            <motion.button
+                              whileHover={{ scale: submitting ? 1 : 1.02 }}
+                              whileTap={{ scale: submitting ? 1 : 0.98 }}
+                              type="submit"
+                              disabled={submitting}
+                              className={`flex-1 bg-gradient-to-r from-primary to-secondary text-white py-3 rounded-lg font-semibold hover:shadow-lg hover:shadow-primary/50 transition ${
+                                submitting
+                                  ? "opacity-50 blur-[1px] cursor-not-allowed"
+                                  : ""
+                              }`}
+                            >
+                              {submitting
+                                ? editingListing
+                                  ? "Updating listing..."
+                                  : "Creating listing..."
+                                : editingListing
+                                  ? "Update Listing"
+                                  : "Create Listing"}
+                            </motion.button>
+                            <button
+                              type="button"
+                              onClick={resetForm}
+                              className="px-6 py-3 bg-white/10 text-white rounded-lg hover:bg-white/20 transition"
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        </form>
                       </div>
-                    </form>
-                  </div>
-                  </motion.div>
+                    </motion.div>
                   </div>
                 </>
               )}
