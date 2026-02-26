@@ -25,8 +25,8 @@ const Navbar = ({ user, logout }: NavbarProps) => {
 
   return (
     <div
-      className={`sticky top-0 z-50 px-4 transition-all duration-500 ${
-        scrolled ? "py-0 opacity-0 pointer-events-none" : "py-4 opacity-100"
+      className={`sticky top-0 z-50 px-4 py-4 transition-all duration-500 ${
+        scrolled ? "opacity-0 -translate-y-full pointer-events-none" : "opacity-100 translate-y-0"
       }`}
     >
       <nav className="bg-white/95 backdrop-blur-md shadow-xl rounded-full max-w-7xl mx-auto">
