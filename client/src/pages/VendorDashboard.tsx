@@ -3,7 +3,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import { AuthContext } from "../context/AuthContext";
+import { compressImage } from "../utils/formatters";
 import Navbar from "../components/Navbar";
+import Modal from "../components/Modal";
+import ListingForm from "../components/ListingForm";
+import ListingCard from "../components/ListingCard";
+import StatCard from "../components/StatCard";
 
 interface Listing {
   _id: string;
@@ -74,61 +79,118 @@ const VendorDashboard = () => {
   }, []);
 
   const handleInputChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >,
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Check file size (warn if over 5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        alert("Image is large and will be compressed to reduce upload size.");
+      try {
+        const compressedBase64 = await compressImage(file);
+        setFormData((prev) => ({ ...prev, image: compressedBase64 }));
+      } catch (error) {
+        console.error("Error processing image:", error);
+        alert("Failed to process image. Please try again.");
       }
-
-      // Compress and resize image
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const img = new Image();
-        img.onload = () => {
-          const canvas = document.createElement("canvas");
-          const ctx = canvas.getContext("2d");
-
-          // Set max dimensions
-          const MAX_WIDTH = 800;
-          const MAX_HEIGHT = 600;
-          let width = img.width;
-          let height = img.height;
-
-          // Calculate new dimensions
-          if (width > height) {
-            if (width > MAX_WIDTH) {
-              height *= MAX_WIDTH / width;
-              width = MAX_WIDTH;
-            }
-          } else {
-            if (height > MAX_HEIGHT) {
-              width *= MAX_HEIGHT / height;
-              height = MAX_HEIGHT;
-            }
-          }
-
-          canvas.width = width;
-          canvas.height = height;
-          ctx?.drawImage(img, 0, 0, width, height);
-
-          // Convert to base64 with reduced quality
-          const compressedImage = canvas.toDataURL("image/jpeg", 0.7);
-          setFormData((prev) => ({ ...prev, image: compressedImage }));
-        };
-        img.src = event.target?.result as string;
-      };
-      reader.readAsDataURL(file);
     }
+  };
+
+  const handleCategoryChange = (category: "HUMAN" | "ANIMAL") => {
+    setFormData((prev) => ({ ...prev, category }));
+  };
+
+  const handleCreate = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!formData.image) {
+      alert("Please upload an image for your listing");
+      return;
+    }
+
+    setSubmitting(true);
+
+    try {
+      const response = await api.post("/listings", {
+        ...formData,
+        price: parseFloat(formData.price),
+        originalPrice: formData.originalPrice
+          ? parseFloat(formData.originalPrice)
+          : undefined,
+      });
+      setListings([response.data, ...listings]);
+      resetForm();
+    } catch (error: any) {
+      console.error("Error creating listing:", error);
+      alert(
+        error.response?.data?.message ||
+          "Failed to create listing. Please try again."
+      );
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingListing) return;
+
+    setSubmitting(true);
+
+    try {
+      const response = await api.put(`/listings/${editingListing._id}`, {
+        ...formData,
+        price: parseFloat(formData.price),
+        originalPrice: formData.originalPrice
+          ? parseFloat(formData.originalPrice)
+          : undefined,
+      });
+      setListings(
+        listings.map((l) => (l._id === editingListing._id ? response.data : l))
+      );
+      resetForm();
+    } catch (error: any) {
+      console.error("Error updating listing:", error);
+      alert(
+        error.response?.data?.message ||
+          "Failed to update listing. Please try again."
+      );
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this listing?")) return;
+
+    try {
+      await api.delete(`/listings/${id}`);
+      setListings(listings.filter((l) => l._id !== id));
+    } catch (error: any) {
+      console.error("Error deleting listing:", error);
+      alert(
+        error.response?.data?.message ||
+          "Failed to delete listing. Please try again."
+      );
+    }
+  };
+
+  const startEdit = (listing: Listing) => {
+    setEditingListing(listing);
+    setFormData({
+      title: listing.title,
+      description: listing.description,
+      price: listing.price.toString(),
+      originalPrice: listing.originalPrice?.toString() || "",
+      category: listing.category,
+      quantity: listing.quantity,
+      pickupTime: listing.pickupTime,
+      image: listing.image,
+      phoneNumber: listing.phoneNumber || "",
+    });
+    setShowCreateForm(true);
   };
 
   const resetForm = () => {
@@ -147,203 +209,48 @@ const VendorDashboard = () => {
     setShowCreateForm(false);
   };
 
-  const handleCreate = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!formData.image) {
-      alert("Please upload a food image before creating the listing.");
-      return;
-    }
-
-    setSubmitting(true);
-    try {
-      await api.post("/listings", {
-        ...formData,
-        price: parseFloat(formData.price),
-        originalPrice: formData.originalPrice
-          ? parseFloat(formData.originalPrice)
-          : undefined,
-      });
-      await fetchMyListings();
-      resetForm();
-      alert(
-        "✅ Listing created successfully!\n\nCustomers can now see it in the Available Food section on the homepage.",
-      );
-    } catch (error: any) {
-      console.error("Error creating listing:", error);
-      let errorMessage = "Failed to create listing";
-
-      if (
-        error.response?.status === 413 ||
-        error.message?.includes("too large")
-      ) {
-        errorMessage =
-          "Image is too large. Please try a smaller image or the system will compress it automatically.";
-      } else if (error.response?.data?.message) {
-        errorMessage = error.response.data.message;
-      } else if (error.message) {
-        errorMessage = error.message;
-      }
-
-      alert(
-        `❌ Error: ${errorMessage}\n\nPlease check all fields and try again.`,
-      );
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  const handleUpdate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!editingListing) return;
-
-    if (!formData.image) {
-      alert("Please upload a food image before updating the listing.");
-      return;
-    }
-
-    setSubmitting(true);
-    try {
-      await api.patch(`/listings/${editingListing._id}`, {
-        ...formData,
-        price: parseFloat(formData.price),
-        originalPrice: formData.originalPrice
-          ? parseFloat(formData.originalPrice)
-          : undefined,
-      });
-      await fetchMyListings();
-      resetForm();
-      alert(
-        "✅ Listing updated successfully!\n\nThe changes are now visible to customers.",
-      );
-    } catch (error: any) {
-      console.error("Error updating listing:", error);
-      let errorMessage = "Failed to update listing";
-
-      if (
-        error.response?.status === 413 ||
-        error.message?.includes("too large")
-      ) {
-        errorMessage =
-          "Image is too large. Please try a smaller image or the system will compress it automatically.";
-      } else if (error.response?.data?.message) {
-        errorMessage = error.response.data.message;
-      } else if (error.message) {
-        errorMessage = error.message;
-      }
-
-      alert(
-        `❌ Error: ${errorMessage}\n\nPlease check all fields and try again.`,
-      );
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this listing?")) return;
-
-    try {
-      await api.delete(`/listings/${id}`);
-      setListings((prev) => prev.filter((listing) => listing._id !== id));
-    } catch (error) {
-      console.error("Error deleting listing:", error);
-    }
-  };
-
-  const startEdit = (listing: Listing) => {
-    setEditingListing(listing);
-    setFormData({
-      title: listing.title,
-      description: listing.description,
-      price: listing.price.toString(),
-      originalPrice: listing.originalPrice?.toString() || "",
-      category: listing.category,
-      quantity: listing.quantity,
-      pickupTime: listing.pickupTime,
-      image: listing.image || "",
-      phoneNumber: listing.phoneNumber || "",
-    });
-    setShowCreateForm(true);
-  };
-
-  if (!user || user.role !== "VENDOR") {
-    return null;
-  }
-
   const totalListings = listings.length;
   const humanListings = listings.filter((l) => l.category === "HUMAN").length;
   const animalListings = listings.filter((l) => l.category === "ANIMAL").length;
   const totalRevenue = listings.reduce((sum, l) => sum + l.price, 0);
   const avgDiscount =
-    listings
-      .filter((l) => l.originalPrice)
-      .reduce((sum, l) => {
-        if (l.originalPrice) {
-          return sum + ((l.originalPrice - l.price) / l.originalPrice) * 100;
-        }
-        return sum;
-      }, 0) / listings.filter((l) => l.originalPrice).length || 0;
+    listings.filter((l) => l.originalPrice).length > 0
+      ? listings
+          .filter((l) => l.originalPrice)
+          .reduce(
+            (sum, l) =>
+              sum +
+              ((l.originalPrice! - l.price) / l.originalPrice!) * 100,
+            0
+          ) / listings.filter((l) => l.originalPrice).length
+      : 0;
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black">
       <Navbar user={user} logout={logout} />
 
-      <div className="flex relative">
-        {sidebarOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setSidebarOpen(false)}
-            className="fixed inset-0 bg-black/50 z-30 lg:hidden"
-          />
-        )}
-
+      <div className="relative flex">
         <AnimatePresence>
           {sidebarOpen && (
             <motion.aside
-              initial={{ x: -50, opacity: 0 }}
+              initial={{ x: -300, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
-              exit={{ x: -50, opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="fixed left-0 top-20 h-[calc(100vh-5rem)] w-[85vw] max-w-xs sm:w-72 bg-white/10 backdrop-blur-lg border border-white/20 rounded-3xl p-4 sm:p-6 overflow-y-auto z-40 lg:relative lg:top-0 lg:left-0 lg:h-auto lg:ml-6 lg:w-72"
+              exit={{ x: -300, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              className="hidden lg:block fixed left-0 top-20 h-[calc(100vh-5rem)] w-80 bg-gradient-to-b from-gray-900/95 to-gray-800/95 backdrop-blur-xl border-r border-white/10 overflow-y-auto z-30"
             >
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl sm:text-2xl font-bold text-white">
-                  Overview
-                </h2>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => setSidebarOpen(false)}
-                  className="bg-white/10 backdrop-blur-md text-white p-2 rounded-full hover:bg-white/20 transition border border-white/20"
-                  aria-label="Close sidebar"
-                >
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-xl font-bold text-white">Statistics</h2>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setSidebarOpen(false)}
+                    className="p-2 hover:bg-white/10 rounded-lg transition"
+                    aria-label="Close sidebar"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                </motion.button>
-              </div>
-
-              <div className="space-y-3 sm:space-y-4">
-                <div className="bg-gradient-to-br from-primary/20 to-secondary/20 rounded-2xl p-3 sm:p-4 border border-primary/30">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-gray-300 text-xs sm:text-sm">
-                      Total Listings
-                    </span>
                     <svg
-                      className="w-6 h-6 sm:w-8 sm:h-8 text-primary"
+                      className="w-5 h-5 text-gray-400"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -352,139 +259,60 @@ const VendorDashboard = () => {
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         strokeWidth={2}
-                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                        d="M6 18L18 6M6 6l12 12"
                       />
                     </svg>
-                  </div>
-                  <p className="text-3xl sm:text-4xl font-bold text-white">
-                    {totalListings}
-                  </p>
+                  </motion.button>
                 </div>
 
-                <div className="bg-gradient-to-br from-primary/20 to-secondary/20 rounded-2xl p-3 sm:p-4 border border-primary/30">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-gray-300 text-xs sm:text-sm">
-                      Human Food
-                    </span>
-                    <svg
-                      className="w-6 h-6 sm:w-8 sm:h-8 text-primary"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
-                      />
-                    </svg>
-                  </div>
-                  <p className="text-2xl sm:text-3xl font-bold text-white">
-                    {humanListings}
-                  </p>
-                  <p className="text-xs text-gray-400 mt-1">
-                    {totalListings > 0
-                      ? Math.round((humanListings / totalListings) * 100)
-                      : 0}
-                    % of total
-                  </p>
-                </div>
-
-                <div className="bg-gradient-to-br from-primary/20 to-secondary/20 rounded-2xl p-3 sm:p-4 border border-primary/30">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-gray-300 text-xs sm:text-sm">
-                      Animal Feed
-                    </span>
-                    <svg
-                      className="w-6 h-6 sm:w-8 sm:h-8 text-primary"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-                      />
-                    </svg>
-                  </div>
-                  <p className="text-2xl sm:text-3xl font-bold text-white">
-                    {animalListings}
-                  </p>
-                  <p className="text-xs text-gray-400 mt-1">
-                    {totalListings > 0
-                      ? Math.round((animalListings / totalListings) * 100)
-                      : 0}
-                    % of total
-                  </p>
-                </div>
-
-                <div className="bg-gradient-to-br from-primary/20 to-secondary/20 rounded-2xl p-3 sm:p-4 border border-primary/30">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-gray-300 text-xs sm:text-sm">
-                      Total Value
-                    </span>
-                    <svg
-                      className="w-6 h-6 sm:w-8 sm:h-8 text-primary"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                      />
-                    </svg>
-                  </div>
-                  <p className="text-2xl sm:text-3xl font-bold text-white">
-                    Rf {totalRevenue.toFixed(2)}
-                  </p>
-                  <p className="text-xs text-gray-400 mt-1">
-                    Combined listing prices
-                  </p>
-                </div>
-
-                {avgDiscount > 0 && (
-                  <div className="bg-gradient-to-br from-primary/20 to-secondary/20 rounded-2xl p-3 sm:p-4 border border-primary/30">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-gray-300 text-xs sm:text-sm">
-                        Avg. Discount
-                      </span>
-                      <svg
-                        className="w-6 h-6 sm:w-8 sm:h-8 text-primary"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
-                        />
-                      </svg>
-                    </div>
-                    <p className="text-2xl sm:text-3xl font-bold text-white">
-                      {avgDiscount.toFixed(1)}%
-                    </p>
+                <div className="space-y-4">
+                  <StatCard label="Total Listings" value={totalListings} index={0} />
+                  <StatCard label="Human Food" value={humanListings} index={1}>
                     <p className="text-xs text-gray-400 mt-1">
-                      Average savings offered
+                      {totalListings > 0
+                        ? Math.round((humanListings / totalListings) * 100)
+                        : 0}
+                      % of total
                     </p>
-                  </div>
-                )}
+                  </StatCard>
+                  <StatCard label="Animal Feed" value={animalListings} index={2}>
+                    <p className="text-xs text-gray-400 mt-1">
+                      {totalListings > 0
+                        ? Math.round((animalListings / totalListings) * 100)
+                        : 0}
+                      % of total
+                    </p>
+                  </StatCard>
+                  <StatCard
+                    label="Total Value"
+                    value={`Rf ${totalRevenue.toFixed(2)}`}
+                    index={3}
+                  >
+                    <p className="text-xs text-gray-400 mt-1">
+                      Combined listing prices
+                    </p>
+                  </StatCard>
+                  {avgDiscount > 0 && (
+                    <StatCard
+                      label="Avg. Discount"
+                      value={`${avgDiscount.toFixed(1)}%`}
+                      index={4}
+                    >
+                      <p className="text-xs text-gray-400 mt-1">
+                        Average savings offered
+                      </p>
+                    </StatCard>
+                  )}
+                </div>
               </div>
             </motion.aside>
           )}
         </AnimatePresence>
 
         <div
-          className={`flex-1 transition-all duration-300 ${sidebarOpen ? "lg:ml-8" : "ml-0"} w-full`}
+          className={`flex-1 transition-all duration-300 ${sidebarOpen ? "lg:ml-80" : "ml-0"} w-full`}
         >
-          <div className="w-full px-4 sm:px-6 lg:px-8 py-8">
+          <div className="w-full px-4 sm:px-6 lg:px-8 py-8 mt-20">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
               <div className="flex items-center gap-4">
                 {!sidebarOpen && (
@@ -529,281 +357,22 @@ const VendorDashboard = () => {
               </motion.button>
             </div>
 
-            <AnimatePresence>
-              {showCreateForm && (
-                <>
-                  {/* Backdrop blur overlay */}
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    onClick={() => setShowCreateForm(false)}
-                    className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
-                  />
-
-                  {/* Modal form */}
-                  <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.95 }}
-                      className="w-full max-w-4xl max-h-[90vh] overflow-y-auto pointer-events-auto"
-                    >
-                      <div className="bg-gradient-to-br from-gray-900/95 to-black/95 backdrop-blur-xl rounded-2xl p-6 sm:p-8 border border-white/20 shadow-2xl">
-                        <div className="flex items-center justify-between mb-6">
-                          <h2 className="text-2xl font-bold text-white">
-                            {editingListing
-                              ? "Edit Listing"
-                              : "Create New Listing"}
-                          </h2>
-                          <motion.button
-                            whileHover={{ scale: 1.1 }}
-                            whileTap={{ scale: 0.9 }}
-                            onClick={() => setShowCreateForm(false)}
-                            className="text-gray-400 hover:text-white transition p-2 hover:bg-white/10 rounded-full"
-                            type="button"
-                          >
-                            <svg
-                              className="w-6 h-6"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M6 18L18 6M6 6l12 12"
-                              />
-                            </svg>
-                          </motion.button>
-                        </div>
-                        <form
-                          onSubmit={
-                            editingListing ? handleUpdate : handleCreate
-                          }
-                          className="space-y-4"
-                        >
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                              <label className="block text-sm font-medium text-gray-200 mb-2">
-                                Title
-                              </label>
-                              <input
-                                type="text"
-                                name="title"
-                                required
-                                value={formData.title}
-                                onChange={handleInputChange}
-                                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-white"
-                                placeholder="e.g., 5 Large Pizzas"
-                              />
-                            </div>
-                            <div>
-                              <label className="block text-sm font-medium text-gray-200 mb-2">
-                                Category
-                              </label>
-                              <div className="grid grid-cols-2 gap-3">
-                                <motion.button
-                                  whileHover={{ scale: 1.02 }}
-                                  whileTap={{ scale: 0.98 }}
-                                  type="button"
-                                  onClick={() =>
-                                    setFormData((prev) => ({
-                                      ...prev,
-                                      category: "HUMAN",
-                                    }))
-                                  }
-                                  className={`py-3 px-4 rounded-lg border-2 transition font-semibold ${
-                                    formData.category === "HUMAN"
-                                      ? "bg-green-500/20 border-green-400 text-green-300"
-                                      : "bg-white/5 border-white/10 text-gray-400 hover:border-white/30"
-                                  }`}
-                                >
-                                  Human Consumption
-                                </motion.button>
-                                <motion.button
-                                  whileHover={{ scale: 1.02 }}
-                                  whileTap={{ scale: 0.98 }}
-                                  type="button"
-                                  onClick={() =>
-                                    setFormData((prev) => ({
-                                      ...prev,
-                                      category: "ANIMAL",
-                                    }))
-                                  }
-                                  className={`py-3 px-4 rounded-lg border-2 transition font-semibold ${
-                                    formData.category === "ANIMAL"
-                                      ? "bg-blue-500/20 border-blue-400 text-blue-300"
-                                      : "bg-white/5 border-white/10 text-gray-400 hover:border-white/30"
-                                  }`}
-                                >
-                                  Animal Feed
-                                </motion.button>
-                              </div>
-                            </div>
-                          </div>
-
-                          <div>
-                            <label className="block text-sm font-medium text-gray-200 mb-2">
-                              Description
-                            </label>
-                            <textarea
-                              name="description"
-                              required
-                              value={formData.description}
-                              onChange={handleInputChange}
-                              rows={3}
-                              className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-white"
-                              placeholder="Describe your food..."
-                            />
-                          </div>
-
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                              <label className="block text-sm font-medium text-gray-200 mb-2">
-                                Price (Rf)
-                              </label>
-                              <input
-                                type="number"
-                                name="price"
-                                required
-                                step="1"
-                                value={formData.price}
-                                onChange={handleInputChange}
-                                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-white"
-                                placeholder="5000"
-                              />
-                            </div>
-                            <div>
-                              <label className="block text-sm font-medium text-gray-200 mb-2">
-                                Original Price (Rf) - Optional
-                              </label>
-                              <input
-                                type="number"
-                                name="originalPrice"
-                                step="1"
-                                value={formData.originalPrice}
-                                onChange={handleInputChange}
-                                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-white"
-                                placeholder="8000"
-                              />
-                            </div>
-                          </div>
-
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                              <label className="block text-sm font-medium text-gray-200 mb-2">
-                                Quantity
-                              </label>
-                              <input
-                                type="text"
-                                name="quantity"
-                                required
-                                value={formData.quantity}
-                                onChange={handleInputChange}
-                                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-white"
-                                placeholder="5 boxes"
-                              />
-                            </div>
-                            <div>
-                              <label className="block text-sm font-medium text-gray-200 mb-2">
-                                Pickup Time
-                              </label>
-                              <input
-                                type="text"
-                                name="pickupTime"
-                                required
-                                value={formData.pickupTime}
-                                onChange={handleInputChange}
-                                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-white"
-                                placeholder="Today 5:00 PM - 6:00 PM"
-                              />
-                            </div>
-                          </div>
-
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                              <label className="block text-sm font-medium text-gray-200 mb-2">
-                                Food Image *{" "}
-                                {!editingListing && (
-                                  <span className="text-primary">
-                                    (Required)
-                                  </span>
-                                )}
-                              </label>
-                              <input
-                                type="file"
-                                accept="image/*"
-                                onChange={handleImageUpload}
-                                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-secondary file:cursor-pointer"
-                              />
-                              <p className="text-xs text-gray-400 mt-1">
-                                Upload a clear image of your food item
-                              </p>
-                              {formData.image && (
-                                <div className="mt-3">
-                                  <img
-                                    src={formData.image}
-                                    alt="Preview"
-                                    className="w-full h-40 object-cover rounded-lg border border-white/20"
-                                  />
-                                </div>
-                              )}
-                            </div>
-                            <div>
-                              <label className="block text-sm font-medium text-gray-200 mb-2">
-                                Contact Phone Number
-                              </label>
-                              <input
-                                type="tel"
-                                name="phoneNumber"
-                                value={formData.phoneNumber}
-                                onChange={handleInputChange}
-                                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-white"
-                                placeholder="+1 (234) 567-8900"
-                              />
-                              <p className="text-xs text-gray-400 mt-1">
-                                For customers to contact you for pickup
-                              </p>
-                            </div>
-                          </div>
-
-                          <div className="flex gap-4">
-                            <motion.button
-                              whileHover={{ scale: submitting ? 1 : 1.02 }}
-                              whileTap={{ scale: submitting ? 1 : 0.98 }}
-                              type="submit"
-                              disabled={submitting}
-                              className={`flex-1 bg-gradient-to-r from-primary to-secondary text-white py-3 rounded-lg font-semibold hover:shadow-lg hover:shadow-primary/50 transition ${
-                                submitting
-                                  ? "opacity-50 blur-[1px] cursor-not-allowed"
-                                  : ""
-                              }`}
-                            >
-                              {submitting
-                                ? editingListing
-                                  ? "Updating listing..."
-                                  : "Creating listing..."
-                                : editingListing
-                                  ? "Update Listing"
-                                  : "Create Listing"}
-                            </motion.button>
-                            <button
-                              type="button"
-                              onClick={resetForm}
-                              className="px-6 py-3 bg-white/10 text-white rounded-lg hover:bg-white/20 transition"
-                            >
-                              Cancel
-                            </button>
-                          </div>
-                        </form>
-                      </div>
-                    </motion.div>
-                  </div>
-                </>
-              )}
-            </AnimatePresence>
+            <Modal
+              isOpen={showCreateForm}
+              onClose={resetForm}
+              title={editingListing ? "Edit Listing" : "Create New Listing"}
+            >
+              <ListingForm
+                formData={formData}
+                isEditing={!!editingListing}
+                isSubmitting={submitting}
+                onSubmit={editingListing ? handleUpdate : handleCreate}
+                onChange={handleInputChange}
+                onImageUpload={handleImageUpload}
+                onCategoryChange={handleCategoryChange}
+                onCancel={resetForm}
+              />
+            </Modal>
 
             {loading ? (
               <div className="flex justify-center items-center py-20">
@@ -824,111 +393,14 @@ const VendorDashboard = () => {
                 }`}
               >
                 {listings.map((listing, index) => (
-                  <motion.div
+                  <ListingCard
                     key={listing._id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                    className="bg-white/10 backdrop-blur-lg rounded-2xl overflow-hidden border border-white/20 hover:border-primary/50 transition-all"
-                  >
-                    {listing.image && (
-                      <div className="relative h-48 w-full">
-                        <img
-                          src={listing.image}
-                          alt={listing.title}
-                          className="w-full h-full object-cover"
-                        />
-                        <div className="absolute top-3 right-3">
-                          <span
-                            className={`inline-block px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-md ${
-                              listing.category === "HUMAN"
-                                ? "bg-green-500/30 text-green-200 border border-green-400/50"
-                                : "bg-blue-500/30 text-blue-200 border border-blue-400/50"
-                            }`}
-                          >
-                            {listing.category}
-                          </span>
-                        </div>
-                      </div>
-                    )}
-
-                    <div className="p-4 sm:p-6">
-                      <div className="flex items-start justify-between mb-4">
-                        <div className="flex-1 min-w-0">
-                          <h3 className="text-lg sm:text-xl font-bold text-white mb-1 break-words">
-                            {listing.title}
-                          </h3>
-                        </div>
-                      </div>
-
-                      <p className="text-gray-300 mb-4 text-sm sm:text-base break-words">
-                        {listing.description}
-                      </p>
-
-                      <div className="flex items-center gap-2 mb-4 flex-wrap">
-                        <span className="text-xl sm:text-2xl font-bold text-primary">
-                          Rf {listing.price}
-                        </span>
-                        {listing.originalPrice && (
-                          <>
-                            <span className="text-gray-500 line-through">
-                              Rf {listing.originalPrice}
-                            </span>
-                            <span className="bg-primary/20 text-primary px-2 py-1 rounded text-xs font-semibold">
-                              {Math.round(
-                                ((listing.originalPrice - listing.price) /
-                                  listing.originalPrice) *
-                                  100,
-                              )}
-                              % OFF
-                            </span>
-                          </>
-                        )}
-                      </div>
-
-                      <div className="space-y-2 text-sm mb-4">
-                        <div className="text-gray-400 break-words">
-                          <span className="font-semibold text-white">
-                            Quantity:
-                          </span>{" "}
-                          {listing.quantity}
-                        </div>
-                        <div className="text-gray-400 break-words">
-                          <span className="font-semibold text-white">
-                            Pickup:
-                          </span>{" "}
-                          {listing.pickupTime}
-                        </div>
-                        {listing.phoneNumber && (
-                          <div className="text-gray-400 break-words">
-                            <span className="font-semibold text-white">
-                              Contact:
-                            </span>{" "}
-                            {listing.phoneNumber}
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="flex gap-2">
-                        <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          onClick={() => startEdit(listing)}
-                          className="flex-1 bg-primary/20 text-primary py-2 rounded-lg hover:bg-primary/30 transition font-semibold text-sm sm:text-base"
-                        >
-                          Edit
-                        </motion.button>
-                        <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          onClick={() => handleDelete(listing._id)}
-                          className="flex-1 bg-red-500/20 text-red-300 py-2 rounded-lg hover:bg-red-500/30 transition font-semibold text-sm sm:text-base"
-                        >
-                          Delete
-                        </motion.button>
-                      </div>
-                    </div>
-                  </motion.div>
+                    listing={listing}
+                    index={index}
+                    showActions
+                    onEdit={startEdit}
+                    onDelete={handleDelete}
+                  />
                 ))}
               </div>
             )}

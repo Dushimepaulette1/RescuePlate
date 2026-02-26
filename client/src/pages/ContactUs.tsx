@@ -3,6 +3,9 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import Navbar from "../components/Navbar";
+import Input from "../components/Input";
+import TextArea from "../components/TextArea";
+import ContactInfoItem from "../components/ContactInfoItem";
 
 const ContactUs = () => {
   const [name, setName] = useState("");
@@ -21,7 +24,6 @@ const ContactUs = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Add actual form submission logic
     setSuccess(true);
     setTimeout(() => {
       setName("");
@@ -32,135 +34,133 @@ const ContactUs = () => {
     }, 3000);
   };
 
-  return (
-    <div className="min-h-screen">
-      <Navbar user={user} logout={logout} />
-      <div className="py-12 px-4 md:px-8">
-        <div className="max-w-7xl mx-auto">
-          {/* Back Button */}
-          <button
-            onClick={() => navigate(-1)}
-            className="inline-flex items-center gap-2 text-gray-400 hover:text-primary transition-colors mb-8 group"
-          >
-            <svg
-              className="w-5 h-5 transition-transform group-hover:-translate-x-1"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
-            <span className="font-medium">Back</span>
-          </button>
+  const contactInfo = [
+    {
+      icon: (
+        <svg
+          className="w-6 h-6 text-primary"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+          />
+        </svg>
+      ),
+      label: "info@rescueplate.com",
+      href: "mailto:info@rescueplate.com",
+    },
+    {
+      icon: (
+        <svg
+          className="w-6 h-6 text-primary"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+          />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+          />
+        </svg>
+      ),
+      label: "KN 4 Ave, Kigali, Rwanda",
+      href: undefined,
+    },
+    {
+      icon: (
+        <svg
+          className="w-6 h-6 text-primary"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+          />
+        </svg>
+      ),
+      label: "+250 788 123 456",
+      href: "tel:+250788123456",
+    },
+  ];
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-            {/* Left Side - Contact Info */}
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black">
+      <Navbar user={user} logout={logout} />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 mt-16">
+        <button
+          onClick={() => navigate(-1)}
+          className="inline-flex items-center gap-2 text-gray-400 hover:text-primary transition-colors mb-8 group"
+        >
+          <svg
+            className="w-5 h-5 transition-transform group-hover:-translate-x-1"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M10 19l-7-7m0 0l7-7m-7 7h18"
+            />
+          </svg>
+          Back
+        </button>
+
+        <div className="bg-white/5 backdrop-blur-lg rounded-3xl shadow-2xl overflow-hidden border border-white/10">
+          <div className="grid grid-cols-1 lg:grid-cols-2">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
-              className="space-y-8"
+              className="p-8 lg:p-12 bg-gradient-to-br from-primary/10 to-secondary/10 space-y-8"
             >
               <div>
                 <h1 className="text-5xl md:text-6xl font-bold text-white mb-4">
                   Contact Us
                 </h1>
                 <p className="text-gray-400 text-lg leading-relaxed max-w-md">
-                  Have questions about RescuePlate? Whether you're a customer looking for great food deals or a vendor wanting to reduce waste, we're here to help. Reach out to us anytime!
+                  Have questions about RescuePlate? Whether you're a customer
+                  looking for great food deals or a vendor wanting to reduce
+                  waste, we're here to help. Reach out to us anytime!
                 </p>
               </div>
 
               <div className="space-y-6 pt-8">
-                {/* Email */}
-                <div className="flex items-center gap-4">
-                  <div className="flex-shrink-0">
-                    <svg
-                      className="w-6 h-6 text-primary"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                      />
-                    </svg>
-                  </div>
-                  <div>
-                    <p className="text-white font-medium">
-                      info@rescueplate.com
-                    </p>
-                  </div>
-                </div>
-
-                {/* Address */}
-                <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 mt-1">
-                    <svg
-                      className="w-6 h-6 text-primary"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                      />
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                      />
-                    </svg>
-                  </div>
-                  <div>
-                    <p className="text-white font-medium">
-                      KN 4 Ave, Kigali
-                    </p>
-                    <p className="text-gray-400">Kigali, Rwanda</p>
-                  </div>
-                </div>
-
-                {/* Phone */}
-                <div className="flex items-center gap-4">
-                  <div className="flex-shrink-0">
-                    <svg
-                      className="w-6 h-6 text-primary"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-                      />
-                    </svg>
-                  </div>
-                  <div>
-                    <p className="text-white font-medium">+250 788 123 456</p>
-                  </div>
-                </div>
+                {contactInfo.map((info, index) => (
+                  <ContactInfoItem
+                    key={index}
+                    icon={info.icon}
+                    label={info.label}
+                    href={info.href}
+                  />
+                ))}
               </div>
             </motion.div>
 
-            {/* Right Side - Contact Form */}
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
-              className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/20"
+              className="p-8 lg:p-12"
             >
               {success && (
                 <motion.div
@@ -173,58 +173,40 @@ const ContactUs = () => {
               )}
 
               <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Name Field */}
-                <div>
-                  <input
-                    id="name"
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Name*"
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-white placeholder-gray-400 transition"
-                    required
-                  />
-                </div>
+                <Input
+                  id="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Name*"
+                  required
+                />
 
-                {/* Email Field */}
-                <div>
-                  <input
-                    id="email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Email*"
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-white placeholder-gray-400 transition"
-                    required
-                  />
-                </div>
+                <Input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Email*"
+                  required
+                />
 
-                {/* Website Field */}
-                <div>
-                  <input
-                    id="website"
-                    type="text"
-                    value={website}
-                    onChange={(e) => setWebsite(e.target.value)}
-                    placeholder="Website*"
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-white placeholder-gray-400 transition"
-                  />
-                </div>
+                <Input
+                  id="website"
+                  value={website}
+                  onChange={(e) => setWebsite(e.target.value)}
+                  placeholder="Website*"
+                  required
+                />
 
-                {/* Message Field */}
-                <div>
-                  <textarea
-                    id="message"
-                    rows={5}
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    placeholder="Message*"
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-white placeholder-gray-400 transition resize-none"
-                    required
-                  />
-                </div>
+                <TextArea
+                  id="message"
+                  rows={5}
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  placeholder="Message*"
+                  required
+                />
 
-                {/* Submit Button */}
                 <button
                   type="submit"
                   className="w-full py-3 bg-gradient-to-r from-primary to-secondary text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-primary/50 transition-all duration-300 transform hover:scale-[1.02]"

@@ -1,38 +1,30 @@
-interface InputProps {
+interface TextAreaProps {
   id?: string;
   name?: string;
   label?: string;
-  type?: string;
-  value: string | number;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   placeholder?: string;
   required?: boolean;
   disabled?: boolean;
-  min?: number;
-  max?: number;
-  step?: number;
-  accept?: string;
+  rows?: number;
   className?: string;
   labelClassName?: string;
 }
 
-const Input = ({
+const TextArea = ({
   id,
   name,
   label,
-  type = "text",
   value,
   onChange,
   placeholder,
   required = false,
   disabled = false,
-  min,
-  max,
-  step,
-  accept,
+  rows = 4,
   className = "",
   labelClassName = "",
-}: InputProps) => {
+}: TextAreaProps) => {
   return (
     <div>
       {label && (
@@ -43,23 +35,19 @@ const Input = ({
           {label}
         </label>
       )}
-      <input
+      <textarea
         id={id}
         name={name}
-        type={type}
         required={required}
         disabled={disabled}
         value={value}
         onChange={onChange}
-        min={min}
-        max={max}
-        step={step}
-        accept={accept}
-        className={`w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-white placeholder-gray-400 transition disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
+        rows={rows}
+        className={`w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-white placeholder-gray-400 transition resize-none disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
         placeholder={placeholder}
       />
     </div>
   );
 };
 
-export default Input;
+export default TextArea;

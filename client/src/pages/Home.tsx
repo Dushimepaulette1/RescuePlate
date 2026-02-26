@@ -5,6 +5,7 @@ import api from "../services/api";
 import { AuthContext } from "../context/AuthContext";
 import LoadingSpinner from "../components/LoadingSpinner";
 import Navbar from "../components/Navbar";
+import ListingCard from "../components/ListingCard";
 
 interface Listing {
   _id: string;
@@ -30,7 +31,7 @@ const Home = () => {
   const [listings, setListings] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [displayCount, setDisplayCount] = useState(9); // Show 9 items initially
+  const [displayCount, setDisplayCount] = useState(9);
   const authContext = useContext(AuthContext);
 
   if (!authContext) {
@@ -136,7 +137,6 @@ const Home = () => {
 
     try {
       await api.patch(`/listings/${listingId}/pickup`);
-      // Refresh listings to show updated status
       fetchListings();
       alert("Pickup request sent! The vendor will be notified.");
     } catch (error: any) {
@@ -149,16 +149,13 @@ const Home = () => {
     <div className="min-h-screen">
       <Navbar user={user} logout={logout} />
 
-      {/* Extended Background Container */}
       <div className="relative overflow-hidden">
-        {/* Background Image that extends to features section */}
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat blur-sm"
           style={{ backgroundImage: "url(/pizza-hero.jpg)" }}
         ></div>
         <div className="absolute inset-0 bg-black/60"></div>
         <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-secondary/20"></div>
-        {/* Gradient fade to black from top to bottom */}
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/50 to-black"></div>
 
         <section className="relative py-20 px-4 z-10">
@@ -205,7 +202,6 @@ const Home = () => {
           </div>
         </section>
 
-        {/* Features Section - Auto Slider */}
         {!user && (
           <section className="py-20 px-4 relative" id="features-section">
             <div className="max-w-5xl mx-auto">
@@ -216,7 +212,6 @@ const Home = () => {
                 Join thousands of people reducing food waste while saving money
               </p>
 
-              {/* Slider */}
               <div className="relative h-96 overflow-hidden">
                 <AnimatePresence mode="wait">
                   <motion.div
@@ -243,7 +238,6 @@ const Home = () => {
                   </motion.div>
                 </AnimatePresence>
 
-                {/* Navigation Dots */}
                 <div className="absolute bottom-8 left-0 right-0 flex justify-center gap-3">
                   {features.map((_, index) => (
                     <button
@@ -259,7 +253,6 @@ const Home = () => {
                   ))}
                 </div>
 
-                {/* Arrow Navigation */}
                 <button
                   onClick={() =>
                     setCurrentSlide((prev) =>
@@ -330,133 +323,18 @@ const Home = () => {
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {listings.slice(0, displayCount).map((listing, index) => (
-                    <motion.div
+                    <ListingCard
                       key={listing._id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                      className="bg-white/10 backdrop-blur-lg rounded-2xl overflow-hidden border border-white/20 hover:border-primary/50 transition-all hover:shadow-lg hover:shadow-primary/20"
-                    >
-                      {/* Food Image */}
-                      {listing.image && (
-                        <div className="relative h-48 w-full">
-                          <img
-                            src={listing.image}
-                            alt={listing.title}
-                            className="w-full h-full object-cover"
-                          />
-                          <div className="absolute top-3 right-3">
-                            <span
-                              className={`inline-block px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-md ${
-                                listing.category === "HUMAN"
-                                  ? "bg-green-500/30 text-green-200 border border-green-400/50"
-                                  : "bg-blue-500/30 text-blue-200 border border-blue-400/50"
-                              }`}
-                            >
-                              {listing.category}
-                            </span>
-                          </div>
-                          {listing.pickedUp && (
-                            <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                              <span className="text-white font-bold text-xl">
-                                PICKED UP
-                              </span>
-                            </div>
-                          )}
-                        </div>
-                      )}
-
-                      <div className="p-6">
-                        <div className="flex items-start justify-between mb-2">
-                          <div className="flex-1">
-                            <h3 className="text-xl font-bold text-white mb-1">
-                              {listing.title}
-                            </h3>
-                            <p className="text-sm text-gray-400">
-                              Posted by:{" "}
-                              <span className="text-primary font-semibold">
-                                {listing.vendorId.name}
-                              </span>
-                            </p>
-                          </div>
-                        </div>
-
-                        <p className="text-gray-300 mb-4 line-clamp-2">
-                          {listing.description}
-                        </p>
-
-                        <div className="flex items-center gap-3 mb-4">
-                          <div className="flex items-baseline gap-2">
-                            <span className="text-3xl font-bold text-primary">
-                              Rf {listing.price}
-                            </span>
-                            {listing.originalPrice && (
-                              <span className="text-gray-500 line-through">
-                                Rf {listing.originalPrice}
-                              </span>
-                            )}
-                          </div>
-                          {listing.originalPrice && (
-                            <span className="bg-primary/20 text-primary px-2 py-1 rounded text-sm font-semibold">
-                              {Math.round(
-                                ((listing.originalPrice - listing.price) /
-                                  listing.originalPrice) *
-                                  100,
-                              )}
-                              % OFF
-                            </span>
-                          )}
-                        </div>
-
-                        <div className="space-y-2 text-sm mb-4">
-                          <div className="flex items-center text-gray-400">
-                            <span className="font-semibold text-white mr-2">
-                              Quantity:
-                            </span>
-                            {listing.quantity}
-                          </div>
-                          <div className="flex items-center text-gray-400">
-                            <span className="font-semibold text-white mr-2">
-                              Pickup:
-                            </span>
-                            {listing.pickupTime}
-                          </div>
-                          {(listing.phoneNumber ||
-                            listing.vendorId.phoneNumber) && (
-                            <div className="flex items-center text-gray-400">
-                              <span className="font-semibold text-white mr-2">
-                                Contact:
-                              </span>
-                              <a
-                                href={`tel:${listing.phoneNumber || listing.vendorId.phoneNumber}`}
-                                className="text-primary hover:text-secondary transition"
-                              >
-                                {listing.phoneNumber ||
-                                  listing.vendorId.phoneNumber}
-                              </a>
-                            </div>
-                          )}
-                        </div>
-
-                        <motion.button
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
-                          onClick={() => handlePickup(listing._id)}
-                          disabled={listing.pickedUp}
-                          className={`w-full py-3 rounded-lg font-semibold transition ${
-                            listing.pickedUp
-                              ? "bg-gray-500/20 text-gray-400 cursor-not-allowed"
-                              : "bg-gradient-to-r from-primary to-secondary text-white hover:shadow-lg hover:shadow-primary/50"
-                          }`}
-                        >
-                          {listing.pickedUp ? "Already Picked Up" : "Pickup"}
-                        </motion.button>
-                      </div>
-                    </motion.div>
+                      listing={listing}
+                      index={index}
+                      showVendorInfo
+                      onAction={handlePickup}
+                      actionLabel={listing.pickedUp ? "Already Picked Up" : "Pickup"}
+                      actionDisabled={listing.pickedUp}
+                    />
                   ))}
                 </div>
 
-                {/* Load More Button */}
                 {displayCount < listings.length && (
                   <motion.div
                     initial={{ opacity: 0 }}

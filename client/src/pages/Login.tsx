@@ -2,6 +2,7 @@ import { useState, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { AuthContext } from "../context/AuthContext";
+import { validateEmail, validatePassword } from "../utils/validation";
 import ErrorAlert from "../components/ErrorAlert";
 
 const Login = () => {
@@ -20,23 +21,6 @@ const Login = () => {
 
   const { login } = authContext;
 
-  const validateEmail = (email: string): string | null => {
-    if (!email) {
-      return "Email is required";
-    }
-    if (!email.includes("@")) {
-      return "Please enter a valid email address with @";
-    }
-    const emailParts = email.split("@");
-    if (emailParts[1] === "" || !emailParts[1]) {
-      return "Please enter the domain after @";
-    }
-    if (!emailParts[1].includes(".")) {
-      return "Please enter a valid email domain (e.g., gmail.com)";
-    }
-    return null;
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -47,8 +31,9 @@ const Login = () => {
       return;
     }
 
-    if (!password) {
-      setError("Password is required");
+    const passwordError = validatePassword(password);
+    if (passwordError) {
+      setError(passwordError);
       return;
     }
 
