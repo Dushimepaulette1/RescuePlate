@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 
@@ -9,12 +9,26 @@ interface NavbarProps {
 
 const Navbar = ({ user, logout }: NavbarProps) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
 
   const isActive = (path: string) => location.pathname === path;
 
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
-    <div className="sticky top-0 z-50 px-4 py-4">
+    <div
+      className={`sticky top-0 z-50 px-4 transition-all duration-500 ${
+        scrolled ? "py-0 opacity-0 pointer-events-none" : "py-4 opacity-100"
+      }`}
+    >
       <nav className="bg-white/95 backdrop-blur-md shadow-xl rounded-full max-w-7xl mx-auto">
         <div className="px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
