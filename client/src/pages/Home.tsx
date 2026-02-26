@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import api from "../services/api";
 import { AuthContext } from "../context/AuthContext";
 import LoadingSpinner from "../components/LoadingSpinner";
+import Navbar from "../components/Navbar";
 
 interface Listing {
   _id: string;
@@ -122,66 +123,7 @@ const Home = () => {
 
   return (
     <div className="min-h-screen">
-      <nav className="bg-black/30 backdrop-blur-md border-b border-white/10 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link
-              to="/"
-              className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent"
-            >
-              RescuePlate
-            </Link>
-            <div className="flex items-center gap-6">
-              <Link
-                to="/about"
-                className="text-white hover:text-primary transition font-medium"
-              >
-                About
-              </Link>
-              <Link
-                to="/contact"
-                className="text-white hover:text-primary transition font-medium"
-              >
-                Contact
-              </Link>
-              {user ? (
-                <>
-                  <span className="text-gray-300">Welcome, {user.name}</span>
-                  {user.role === "VENDOR" && (
-                    <Link
-                      to="/vendor-dashboard"
-                      className="bg-primary/20 text-primary px-4 py-2 rounded-lg hover:bg-primary/30 transition"
-                    >
-                      My Dashboard
-                    </Link>
-                  )}
-                  <button
-                    onClick={logout}
-                    className="bg-white/10 text-white px-4 py-2 rounded-lg hover:bg-white/20 transition"
-                  >
-                    Logout
-                  </button>
-                </>
-              ) : (
-                <>
-                  <Link
-                    to="/login"
-                    className="text-white hover:text-primary transition"
-                  >
-                    Login
-                  </Link>
-                  <Link
-                    to="/register"
-                    className="bg-gradient-to-r from-primary to-secondary text-white px-4 py-2 rounded-lg hover:shadow-lg hover:shadow-primary/50 transition"
-                  >
-                    Sign Up
-                  </Link>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-      </nav>
+      <Navbar user={user} logout={logout} />
 
       {/* Extended Background Container */}
       <div className="relative overflow-hidden">
@@ -342,7 +284,7 @@ const Home = () => {
       )}
       </div>
 
-      <section className="py-16 px-4 relative bg-black/30 backdrop-blur-md">
+      <section className="py-16 px-4 relative bg-gradient-to-b from-transparent via-black/20 to-black/30">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-4xl font-bold text-white mb-4">
