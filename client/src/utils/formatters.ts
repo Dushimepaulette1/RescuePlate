@@ -4,7 +4,7 @@ export const formatPrice = (price: number): string => {
 
 export const calculateDiscount = (
   originalPrice: number,
-  currentPrice: number
+  currentPrice: number,
 ): number => {
   return Math.round(((originalPrice - currentPrice) / originalPrice) * 100);
 };
@@ -13,7 +13,7 @@ export const compressImage = (
   file: File,
   maxWidth: number = 800,
   maxHeight: number = 600,
-  quality: number = 0.7
+  quality: number = 0.7,
 ): Promise<string> => {
   return new Promise((resolve, reject) => {
     if (file.size > 5 * 1024 * 1024) {

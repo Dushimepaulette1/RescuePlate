@@ -10,7 +10,14 @@ interface StatCardProps {
   children?: ReactNode;
 }
 
-const StatCard = ({ icon, label, value, index = 0, className = "", children }: StatCardProps) => {
+const StatCard = ({
+  icon,
+  label,
+  value,
+  index = 0,
+  className = "",
+  children,
+}: StatCardProps) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}

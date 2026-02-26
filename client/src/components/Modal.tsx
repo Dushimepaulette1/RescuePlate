@@ -9,7 +9,13 @@ interface ModalProps {
   className?: string;
 }
 
-const Modal = ({ isOpen, onClose, title, children, className = "" }: ModalProps) => {
+const Modal = ({
+  isOpen,
+  onClose,
+  title,
+  children,
+  className = "",
+}: ModalProps) => {
   return (
     <AnimatePresence>
       {isOpen && (
@@ -29,7 +35,9 @@ const Modal = ({ isOpen, onClose, title, children, className = "" }: ModalProps)
               className={`bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto border border-white/20 ${className}`}
             >
               <div className="sticky top-0 bg-gradient-to-br from-gray-900 to-gray-800 border-b border-white/10 p-6 flex justify-between items-center z-10">
-                {title && <h2 className="text-2xl font-bold text-white">{title}</h2>}
+                {title && (
+                  <h2 className="text-2xl font-bold text-white">{title}</h2>
+                )}
                 <button
                   onClick={onClose}
                   className="p-2 hover:bg-white/10 rounded-lg transition ml-auto"

@@ -21,7 +21,9 @@ interface ListingFormProps {
   isSubmitting: boolean;
   onSubmit: (e: React.FormEvent) => void;
   onChange: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
   ) => void;
   onImageUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onCategoryChange: (category: "HUMAN" | "ANIMAL") => void;
@@ -139,7 +141,8 @@ const ListingForm = ({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium text-gray-200 mb-2">
-            Food Image * {!isEditing && <span className="text-primary">(Required)</span>}
+            Food Image *{" "}
+            {!isEditing && <span className="text-primary">(Required)</span>}
           </label>
           <input
             type="file"
