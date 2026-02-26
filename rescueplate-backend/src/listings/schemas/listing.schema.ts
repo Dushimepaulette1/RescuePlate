@@ -34,6 +34,15 @@ export class Listing extends Document {
   @Prop({ required: true })
   pickupTime!: string;
 
+  @Prop({ required: true })
+  image!: string;
+
+  @Prop()
+  phoneNumber?: string;
+
+  @Prop({ default: false })
+  pickedUp!: boolean;
+
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',

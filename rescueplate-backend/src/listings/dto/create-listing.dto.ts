@@ -36,4 +36,14 @@ export class CreateListingDto {
   @IsString()
   @IsNotEmpty()
   pickupTime: string;
+
+  @ApiProperty({ example: '/images/food1.jpg', description: 'Image path or URL of the food' })
+  @IsString()
+  @IsNotEmpty()
+  image: string;
+
+  @ApiProperty({ example: '+1234567890', description: 'Vendor phone number for pickup coordination', required: false })
+  @IsString()
+  @IsOptional()
+  phoneNumber?: string;
 }

@@ -14,6 +14,15 @@ interface Listing {
   category: "HUMAN" | "ANIMAL";
   quantity: string;
   pickupTime: string;
+  image: string;
+  phoneNumber?: string;
+  pickedUp?: boolean;
+  vendorId?: {
+    _id: string;
+    name: string;
+    email: string;
+    phoneNumber?: string;
+  };
 }
 
 const VendorDashboard = () => {
@@ -31,6 +40,8 @@ const VendorDashboard = () => {
     category: "HUMAN" as "HUMAN" | "ANIMAL",
     quantity: "",
     pickupTime: "",
+    image: "",
+    phoneNumber: "",
   });
 
   const navigate = useNavigate();
@@ -70,6 +81,55 @@ const VendorDashboard = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Check file size (warn if over 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert("Image is large and will be compressed to reduce upload size.");
+      }
+
+      // Compress and resize image
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          
+          // Set max dimensions
+          const MAX_WIDTH = 800;
+          const MAX_HEIGHT = 600;
+          let width = img.width;
+          let height = img.height;
+
+          // Calculate new dimensions
+          if (width > height) {
+            if (width > MAX_WIDTH) {
+              height *= MAX_WIDTH / width;
+              width = MAX_WIDTH;
+            }
+          } else {
+            if (height > MAX_HEIGHT) {
+              width *= MAX_HEIGHT / height;
+              height = MAX_HEIGHT;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          ctx?.drawImage(img, 0, 0, width, height);
+
+          // Convert to base64 with reduced quality
+          const compressedImage = canvas.toDataURL('image/jpeg', 0.7);
+          setFormData((prev) => ({ ...prev, image: compressedImage }));
+        };
+        img.src = event.target?.result as string;
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const resetForm = () => {
     setFormData({
       title: "",
@@ -79,6 +139,8 @@ const VendorDashboard = () => {
       category: "HUMAN",
       quantity: "",
       pickupTime: "",
+      image: "",
+      phoneNumber: "",
     });
     setEditingListing(null);
     setShowCreateForm(false);
@@ -86,6 +148,12 @@ const VendorDashboard = () => {
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!formData.image) {
+      alert("Please upload a food image before creating the listing.");
+      return;
+    }
+
     try {
       await api.post("/listings", {
         ...formData,
@@ -94,16 +162,33 @@ const VendorDashboard = () => {
           ? parseFloat(formData.originalPrice)
           : undefined,
       });
-      fetchMyListings();
+      await fetchMyListings();
       resetForm();
-    } catch (error) {
+      alert("✅ Listing created successfully!\n\nCustomers can now see it in the Available Food section on the homepage.");
+    } catch (error: any) {
       console.error("Error creating listing:", error);
+      let errorMessage = "Failed to create listing";
+      
+      if (error.response?.status === 413 || error.message?.includes("too large")) {
+        errorMessage = "Image is too large. Please try a smaller image or the system will compress it automatically.";
+      } else if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
+      alert(`❌ Error: ${errorMessage}\n\nPlease check all fields and try again.`);
     }
   };
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingListing) return;
+
+    if (!formData.image) {
+      alert("Please upload a food image before updating the listing.");
+      return;
+    }
 
     try {
       await api.patch(`/listings/${editingListing._id}`, {
@@ -113,10 +198,22 @@ const VendorDashboard = () => {
           ? parseFloat(formData.originalPrice)
           : undefined,
       });
-      fetchMyListings();
+      await fetchMyListings();
       resetForm();
-    } catch (error) {
+      alert("✅ Listing updated successfully!\n\nThe changes are now visible to customers.");
+    } catch (error: any) {
       console.error("Error updating listing:", error);
+      let errorMessage = "Failed to update listing";
+      
+      if (error.response?.status === 413 || error.message?.includes("too large")) {
+        errorMessage = "Image is too large. Please try a smaller image or the system will compress it automatically.";
+      } else if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
+      alert(`❌ Error: ${errorMessage}\n\nPlease check all fields and try again.`);
     }
   };
 
@@ -141,6 +238,8 @@ const VendorDashboard = () => {
       category: listing.category,
       quantity: listing.quantity,
       pickupTime: listing.pickupTime,
+      image: listing.image || "",
+      phoneNumber: listing.phoneNumber || "",
     });
     setShowCreateForm(true);
   };
@@ -561,6 +660,48 @@ const VendorDashboard = () => {
                         </div>
                       </div>
 
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-200 mb-2">
+                            Food Image * {!editingListing && <span className="text-primary">(Required)</span>}
+                          </label>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageUpload}
+                            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-secondary file:cursor-pointer"
+                          />
+                          <p className="text-xs text-gray-400 mt-1">
+                            Upload a clear image of your food item
+                          </p>
+                          {formData.image && (
+                            <div className="mt-3">
+                              <img
+                                src={formData.image}
+                                alt="Preview"
+                                className="w-full h-40 object-cover rounded-lg border border-white/20"
+                              />
+                            </div>
+                          )}
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-200 mb-2">
+                            Contact Phone Number
+                          </label>
+                          <input
+                            type="tel"
+                            name="phoneNumber"
+                            value={formData.phoneNumber}
+                            onChange={handleInputChange}
+                            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-white"
+                            placeholder="+1 (234) 567-8900"
+                          />
+                          <p className="text-xs text-gray-400 mt-1">
+                            For customers to contact you for pickup
+                          </p>
+                        </div>
+                      </div>
+
                       <div className="flex gap-4">
                         <motion.button
                           whileHover={{ scale: 1.02 }}
@@ -608,22 +749,35 @@ const VendorDashboard = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.1 }}
-                    className="bg-white/10 backdrop-blur-lg rounded-2xl p-4 sm:p-6 border border-white/20 hover:border-primary/50 transition-all"
+                    className="bg-white/10 backdrop-blur-lg rounded-2xl overflow-hidden border border-white/20 hover:border-primary/50 transition-all"
                   >
+                    {listing.image && (
+                      <div className="relative h-48 w-full">
+                        <img
+                          src={listing.image}
+                          alt={listing.title}
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute top-3 right-3">
+                          <span
+                            className={`inline-block px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-md ${
+                              listing.category === "HUMAN"
+                                ? "bg-green-500/30 text-green-200 border border-green-400/50"
+                                : "bg-blue-500/30 text-blue-200 border border-blue-400/50"
+                            }`}
+                          >
+                            {listing.category}
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                    
+                    <div className="p-4 sm:p-6">
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex-1 min-w-0">
                         <h3 className="text-lg sm:text-xl font-bold text-white mb-1 break-words">
                           {listing.title}
                         </h3>
-                        <span
-                          className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${
-                            listing.category === "HUMAN"
-                              ? "bg-green-500/20 text-green-300"
-                              : "bg-blue-500/20 text-blue-300"
-                          }`}
-                        >
-                          {listing.category}
-                        </span>
                       </div>
                     </div>
 
@@ -665,6 +819,14 @@ const VendorDashboard = () => {
                         </span>{" "}
                         {listing.pickupTime}
                       </div>
+                      {listing.phoneNumber && (
+                        <div className="text-gray-400 break-words">
+                          <span className="font-semibold text-white">
+                            Contact:
+                          </span>{" "}
+                          {listing.phoneNumber}
+                        </div>
+                      )}
                     </div>
 
                     <div className="flex gap-2">
@@ -684,6 +846,7 @@ const VendorDashboard = () => {
                       >
                         Delete
                       </motion.button>
+                    </div>
                     </div>
                   </motion.div>
                 ))}

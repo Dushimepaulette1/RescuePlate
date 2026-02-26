@@ -84,4 +84,16 @@ export class ListingsController {
     const userId = req.user.userId;
     return this.listingsService.remove(id, userId);
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch(':id/pickup')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Mark a listing as picked up (Customer)' })
+  @ApiResponse({ status: 200, description: 'Listing marked as picked up' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 404, description: 'Listing not found' })
+  markAsPickedUp(@Param('id') id: string, @Request() req) {
+    const userId = req.user.userId;
+    return this.listingsService.markAsPickedUp(id, userId);
+  }
 }

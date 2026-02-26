@@ -21,14 +21,14 @@ export class ListingsService {
   async findAll(): Promise<Listing[]> {
     return await this.listingModel
       .find()
-      .populate('vendorId', 'name email')
+      .populate('vendorId', 'name email phoneNumber')
       .exec();
   }
 
   async findOne(id: string): Promise<Listing> {
     const listing = await this.listingModel
       .findById(id)
-      .populate('vendorId', 'name email')
+      .populate('vendorId', 'name email phoneNumber')
       .exec();
 
     if (!listing) {
@@ -80,5 +80,24 @@ export class ListingsService {
     }
 
     await this.listingModel.findByIdAndDelete(id).exec();
+  }
+
+  async markAsPickedUp(id: string, userId: string): Promise<Listing> {
+    const listing = await this.listingModel.findById(id).exec();
+
+    if (!listing) {
+      throw new NotFoundException(`Listing with ID ${id} not found`);
+    }
+
+    if (listing.pickedUp) {
+      throw new ForbiddenException('This listing has already been picked up');
+    }
+
+    const updatedListing = await this.listingModel
+      .findByIdAndUpdate(id, { pickedUp: true }, { new: true })
+      .populate('vendorId', 'name email phoneNumber')
+      .exec();
+
+    return updatedListing!;
   }
 }

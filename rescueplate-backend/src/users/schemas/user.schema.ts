@@ -23,6 +23,9 @@ export class User extends Document {
     default: UserRole.CUSTOMER,
   })
   role!: UserRole;
+
+  @Prop()
+  phoneNumber?: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

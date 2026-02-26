@@ -15,9 +15,14 @@ interface Listing {
   category: "HUMAN" | "ANIMAL";
   quantity: string;
   pickupTime: string;
+  image: string;
+  phoneNumber?: string;
+  pickedUp?: boolean;
   vendorId: {
+    _id: string;
     name: string;
     email: string;
+    phoneNumber?: string;
   };
 }
 
@@ -118,6 +123,25 @@ const Home = () => {
       console.error("Error fetching listings:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handlePickup = async (listingId: string) => {
+    if (!user) {
+      alert("Please login to pickup food items");
+      return;
+    }
+
+    if (!confirm("Are you sure you want to pickup this item?")) return;
+
+    try {
+      await api.patch(`/listings/${listingId}/pickup`);
+      // Refresh listings to show updated status
+      fetchListings();
+      alert("Pickup request sent! The vendor will be notified.");
+    } catch (error: any) {
+      console.error("Error marking as picked up:", error);
+      alert(error.response?.data?.message || "Failed to mark as picked up");
     }
   };
 
@@ -310,26 +334,45 @@ const Home = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.1 }}
-                    className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/20 hover:border-primary/50 transition-all hover:shadow-lg hover:shadow-primary/20"
+                    className="bg-white/10 backdrop-blur-lg rounded-2xl overflow-hidden border border-white/20 hover:border-primary/50 transition-all hover:shadow-lg hover:shadow-primary/20"
                   >
-                    <div className="flex items-start justify-between mb-4">
-                      <div>
+                    {/* Food Image */}
+                    {listing.image && (
+                      <div className="relative h-48 w-full">
+                        <img
+                          src={listing.image}
+                          alt={listing.title}
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute top-3 right-3">
+                          <span
+                            className={`inline-block px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-md ${
+                              listing.category === "HUMAN"
+                                ? "bg-green-500/30 text-green-200 border border-green-400/50"
+                                : "bg-blue-500/30 text-blue-200 border border-blue-400/50"
+                            }`}
+                          >
+                            {listing.category}
+                          </span>
+                        </div>
+                        {listing.pickedUp && (
+                          <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                            <span className="text-white font-bold text-xl">PICKED UP</span>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    <div className="p-6">
+                    <div className="flex items-start justify-between mb-2">
+                      <div className="flex-1">
                         <h3 className="text-xl font-bold text-white mb-1">
                           {listing.title}
                         </h3>
                         <p className="text-sm text-gray-400">
-                          {listing.vendorId.name}
+                          Posted by: <span className="text-primary font-semibold">{listing.vendorId.name}</span>
                         </p>
                       </div>
-                      <span
-                        className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                          listing.category === "HUMAN"
-                            ? "bg-green-500/20 text-green-300"
-                            : "bg-blue-500/20 text-blue-300"
-                        }`}
-                      >
-                        {listing.category}
-                      </span>
                     </div>
 
                     <p className="text-gray-300 mb-4 line-clamp-2">
@@ -359,7 +402,7 @@ const Home = () => {
                       )}
                     </div>
 
-                    <div className="space-y-2 text-sm">
+                    <div className="space-y-2 text-sm mb-4">
                       <div className="flex items-center text-gray-400">
                         <span className="font-semibold text-white mr-2">
                           Quantity:
@@ -372,6 +415,34 @@ const Home = () => {
                         </span>
                         {listing.pickupTime}
                       </div>
+                      {(listing.phoneNumber || listing.vendorId.phoneNumber) && (
+                        <div className="flex items-center text-gray-400">
+                          <span className="font-semibold text-white mr-2">
+                            Contact:
+                          </span>
+                          <a 
+                            href={`tel:${listing.phoneNumber || listing.vendorId.phoneNumber}`}
+                            className="text-primary hover:text-secondary transition"
+                          >
+                            {listing.phoneNumber || listing.vendorId.phoneNumber}
+                          </a>
+                        </div>
+                      )}
+                    </div>
+
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => handlePickup(listing._id)}
+                      disabled={listing.pickedUp}
+                      className={`w-full py-3 rounded-lg font-semibold transition ${
+                        listing.pickedUp
+                          ? "bg-gray-500/20 text-gray-400 cursor-not-allowed"
+                          : "bg-gradient-to-r from-primary to-secondary text-white hover:shadow-lg hover:shadow-primary/50"
+                      }`}
+                    >
+                      {listing.pickedUp ? "Already Picked Up" : "Pickup"}
+                    </motion.button>
                     </div>
                   </motion.div>
                 ))}
