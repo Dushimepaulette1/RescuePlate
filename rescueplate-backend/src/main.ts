@@ -6,7 +6,6 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Increase payload limit for image uploads
   app.use(require('body-parser').json({ limit: '10mb' }));
   app.use(require('body-parser').urlencoded({ limit: '10mb', extended: true }));
 
