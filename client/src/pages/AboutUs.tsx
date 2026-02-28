@@ -17,10 +17,10 @@ const AboutUs = () => {
   return (
     <div className="min-h-screen">
       <Navbar user={user} logout={logout} />
-      {/* Hero Section */}
+ 
       <section className="py-16 px-4">
         <div className="max-w-7xl mx-auto">
-          {/* Back Button */}
+        
           <button
             onClick={() => navigate(-1)}
             className="inline-flex items-center gap-2 text-gray-400 hover:text-primary transition-colors mb-8 group"
@@ -54,7 +54,7 @@ const AboutUs = () => {
         </div>
       </section>
 
-      {/* Main Content Section */}
+   
       <section className="py-16 px-4">
         <div className="max-w-7xl mx-auto">
           <motion.div
@@ -82,11 +82,11 @@ const AboutUs = () => {
         </div>
       </section>
 
-      {/* Stats and Skills Section */}
+
       <section className="py-16 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
-            {/* Skills */}
+       
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -140,7 +140,6 @@ const AboutUs = () => {
               </div>
             </motion.div>
 
-            {/* Stats */}
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -173,7 +172,6 @@ const AboutUs = () => {
         </div>
       </section>
 
-      {/* How It Works Section */}
       <section className="py-16 px-4">
         <div className="max-w-7xl mx-auto text-center">
           <motion.div
@@ -221,7 +219,6 @@ const AboutUs = () => {
         </div>
       </section>
 
-      {/* CTA Section */}
       <section className="py-24 px-4">
         <div className="max-w-4xl mx-auto text-center">
           <motion.div

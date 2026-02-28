@@ -5,7 +5,6 @@ const Footer = () => {
     <footer className="bg-black/30 backdrop-blur-md border-t border-white/10 mt-auto">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-          {/* Brand Section */}
           <div className="md:col-span-1">
             <h3 className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-4">
               RescuePlate
@@ -60,7 +59,6 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Quick Links */}
           <div>
             <h4 className="text-white font-semibold mb-4">Quick Links</h4>
             <ul className="space-y-2">
@@ -99,7 +97,6 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* For Vendors */}
           <div>
             <h4 className="text-white font-semibold mb-4">For Vendors</h4>
             <ul className="space-y-2">
@@ -138,7 +135,6 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Contact Info */}
           <div>
             <h4 className="text-white font-semibold mb-4">Get In Touch</h4>
             <ul className="space-y-2">
@@ -200,7 +196,6 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Bottom Bar */}
         <div className="border-t border-white/10 pt-8 mt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-gray-400 text-sm">

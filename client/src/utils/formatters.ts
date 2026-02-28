@@ -1,5 +1,5 @@
 export const formatPrice = (price: number): string => {
-  return `Rf ${price}`;
+  return `Rwf ${price}`;
 };
 
 export const calculateDiscount = (

@@ -44,7 +44,7 @@ const Home = () => {
     {
       title: "Quality Food",
       description:
-        "Get delicious meals from top local restaurants at amazing prices",
+        "Get delicious meals from top amazing restaurants In Kigali at discounted prices",
       icon: (
         <svg
           className="w-16 h-16"
@@ -84,7 +84,7 @@ const Home = () => {
     {
       title: "Help Planet",
       description:
-        "Reduce food waste and make a positive impact on the environment",
+        "Reduce food waste and make a positive impact on the environment By using our platform",
       icon: (
         <svg
           className="w-16 h-16"

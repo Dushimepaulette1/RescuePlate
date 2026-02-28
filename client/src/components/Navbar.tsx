@@ -38,7 +38,7 @@ const Navbar = ({ user, logout }: NavbarProps) => {
       >
         <div className="px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            {/* Logo */}
+            
             <Link
               to="/"
               className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent"
@@ -46,7 +46,7 @@ const Navbar = ({ user, logout }: NavbarProps) => {
               RescuePlate
             </Link>
 
-            {/* Desktop Navigation */}
+      
             <div className="hidden md:flex items-center bg-gray-100 rounded-full px-2 py-2 gap-2">
               <Link
                 to="/"
@@ -80,7 +80,7 @@ const Navbar = ({ user, logout }: NavbarProps) => {
               </Link>
             </div>
 
-            {/* Auth Buttons - Desktop */}
+          
             <div className="hidden md:flex items-center gap-4">
               {user ? (
                 <>
@@ -120,7 +120,7 @@ const Navbar = ({ user, logout }: NavbarProps) => {
               )}
             </div>
 
-            {/* Hamburger Menu Button - Mobile */}
+          
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="md:hidden p-2 rounded-lg text-gray-700 hover:bg-gray-100 transition"
@@ -150,7 +150,7 @@ const Navbar = ({ user, logout }: NavbarProps) => {
             </button>
           </div>
 
-          {/* Mobile Menu */}
+         
           {mobileMenuOpen && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
