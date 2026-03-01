@@ -4,6 +4,7 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  Matches,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { ListingCategory } from '../schemas/listing.schema';
@@ -73,5 +74,9 @@ export class CreateListingDto {
   })
   @IsString()
   @IsNotEmpty()
+  @Matches(/^(\+?250|0)?[7][0-9]{8}$/, {
+    message:
+      'Phone number must be a valid Rwandan number (e.g., +250788123456, 0788123456, or 788123456)',
+  })
   phoneNumber: string;
 }

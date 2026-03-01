@@ -126,7 +126,11 @@ const Home = () => {
   const fetchListings = async () => {
     try {
       const response = await api.get("/listings");
-      setListings(response.data);
+    
+      const availableListings = response.data.filter(
+        (listing: Listing) => !listing.pickedUp,
+      );
+      setListings(availableListings);
     } catch (error) {
       console.error("Error fetching listings:", error);
     } finally {

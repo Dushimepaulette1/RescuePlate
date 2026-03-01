@@ -124,6 +124,15 @@ const VendorDashboard = () => {
       return;
     }
 
+    
+    const phoneRegex = /^(\+?250|0)?[7][0-9]{8}$/;
+    if (!phoneRegex.test(formData.phoneNumber.trim())) {
+      alert(
+        "Please enter a valid Rwandan phone number (e.g., +250788123456, 0788123456, or 788123456)",
+      );
+      return;
+    }
+
     setSubmitting(true);
 
     try {
@@ -153,6 +162,15 @@ const VendorDashboard = () => {
 
     if (!formData.phoneNumber || !formData.phoneNumber.trim()) {
       alert("Please provide a contact phone number");
+      return;
+    }
+
+    
+    const phoneRegex = /^(\+?250|0)?[7][0-9]{8}$/;
+    if (!phoneRegex.test(formData.phoneNumber.trim())) {
+      alert(
+        "Please enter a valid Rwandan phone number (e.g., +250788123456, 0788123456, or 788123456)",
+      );
       return;
     }
 

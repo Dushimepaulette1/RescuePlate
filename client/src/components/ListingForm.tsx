@@ -170,13 +170,13 @@ const ListingForm = ({
           label="Contact Phone Number"
           value={formData.phoneNumber}
           onChange={onChange}
-          placeholder="+1 (234) 567-8900"
+          placeholder="+250788123456 or 0788123456"
           labelClassName="mb-2"
           className="mb-1"
           required
         />
         <p className="text-xs text-gray-400 -mt-2">
-          For customers to contact you for pickup
+          Rwandan phone number for pickup coordination
         </p>
       </div>
 
