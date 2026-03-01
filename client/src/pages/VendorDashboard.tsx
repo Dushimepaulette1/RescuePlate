@@ -124,7 +124,6 @@ const VendorDashboard = () => {
       return;
     }
 
-    
     const phoneRegex = /^(\+?250|0)?[7][0-9]{8}$/;
     if (!phoneRegex.test(formData.phoneNumber.trim())) {
       alert(
@@ -165,7 +164,6 @@ const VendorDashboard = () => {
       return;
     }
 
-    
     const phoneRegex = /^(\+?250|0)?[7][0-9]{8}$/;
     if (!phoneRegex.test(formData.phoneNumber.trim())) {
       alert(

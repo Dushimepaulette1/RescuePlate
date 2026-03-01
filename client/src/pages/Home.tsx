@@ -126,9 +126,12 @@ const Home = () => {
   const fetchListings = async () => {
     try {
       const response = await api.get("/listings");
-    
+
+      
       const availableListings = response.data.filter(
-        (listing: Listing) => !listing.pickedUp,
+        (listing: Listing) =>
+          !listing.pickedUp ||
+          (listing.pickedUp && listing.pickedUpBy?._id === user?.id),
       );
       setListings(availableListings);
     } catch (error) {
@@ -150,7 +153,7 @@ const Home = () => {
       await api.patch(`/listings/${listingId}/pickup`);
       fetchListings();
       alert(
-        "Successfully marked as picked up! Use the vendor contact info above to arrange pickup.",
+        "Successfully marked as picked up! Check the listing card below for vendor contact details to arrange pickup.",
       );
     } catch (error: any) {
       console.error("Error marking as picked up:", error);
@@ -340,7 +343,9 @@ const Home = () => {
                       key={listing._id}
                       listing={listing}
                       index={index}
-                      showVendorInfo
+                      showVendorInfo={
+                        listing.pickedUp && listing.pickedUpBy?._id === user?.id
+                      }
                       onAction={handlePickup}
                       actionLabel={
                         listing.pickedUp ? "Already Picked Up" : "Pickup"
