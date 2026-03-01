@@ -147,14 +147,14 @@ const ListingCard = ({
                   </a>
                 </p>
               )}
-              {listing.vendorId.phoneNumber && (
+              {listing.phoneNumber && (
                 <p className="text-gray-300 text-xs">
                   <span className="font-semibold">Phone:</span>{" "}
                   <a
-                    href={`tel:${listing.vendorId.phoneNumber}`}
+                    href={`tel:${listing.phoneNumber}`}
                     className="text-primary hover:text-secondary font-medium"
                   >
-                    {listing.vendorId.phoneNumber}
+                    {listing.phoneNumber}
                   </a>
                 </p>
               )}
