@@ -337,7 +337,9 @@ const Home = () => {
                       listing={listing}
                       index={index}
                       showVendorInfo={
-                        listing.pickedUp && listing.pickedUpBy?._id === user?.id
+                        !!user &&
+                        listing.pickedUp &&
+                        listing.pickedUpBy?._id === user.id
                       }
                       onAction={handlePickup}
                       actionLabel={
