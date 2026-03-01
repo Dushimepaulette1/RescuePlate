@@ -67,11 +67,11 @@ export class CreateListingDto {
   image: string;
 
   @ApiProperty({
-    example: '+1234567890',
-    description: 'Vendor phone number for pickup coordination',
-    required: false,
+    example: '+250788123456',
+    description: 'Vendor phone number for pickup coordination (required)',
+    required: true,
   })
   @IsString()
-  @IsOptional()
-  phoneNumber?: string;
+  @IsNotEmpty()
+  phoneNumber: string;
 }

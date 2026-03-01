@@ -70,7 +70,16 @@ export class ListingsService {
     }
 
     const updatedListing = await this.listingModel
-      .findByIdAndUpdate(id, updateListingDto, { new: true })
+      .findByIdAndUpdate(
+        id,
+        {
+          ...updateListingDto,
+          pickedUp: false,
+          pickedUpBy: undefined,
+          pickedUpAt: undefined,
+        },
+        { new: true },
+      )
       .exec();
 
     if (!updatedListing) {
