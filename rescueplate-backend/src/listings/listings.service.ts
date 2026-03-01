@@ -48,7 +48,10 @@ export class ListingsService {
   }
 
   async findByVendor(vendorId: string): Promise<Listing[]> {
-    return await this.listingModel.find({ vendorId }).exec();
+    return await this.listingModel
+      .find({ vendorId })
+      .populate('pickedUpBy', 'name email phoneNumber')
+      .exec();
   }
 
   async update(

@@ -86,7 +86,9 @@ const VendorDashboard = () => {
   }, []);
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -133,7 +135,7 @@ const VendorDashboard = () => {
       console.error("Error creating listing:", error);
       alert(
         error.response?.data?.message ||
-          "Failed to create listing. Please try again."
+          "Failed to create listing. Please try again.",
       );
     } finally {
       setSubmitting(false);
@@ -155,14 +157,14 @@ const VendorDashboard = () => {
           : undefined,
       });
       setListings(
-        listings.map((l) => (l._id === editingListing._id ? response.data : l))
+        listings.map((l) => (l._id === editingListing._id ? response.data : l)),
       );
       resetForm();
     } catch (error: any) {
       console.error("Error updating listing:", error);
       alert(
         error.response?.data?.message ||
-          "Failed to update listing. Please try again."
+          "Failed to update listing. Please try again.",
       );
     } finally {
       setSubmitting(false);
@@ -179,7 +181,7 @@ const VendorDashboard = () => {
       console.error("Error deleting listing:", error);
       alert(
         error.response?.data?.message ||
-          "Failed to delete listing. Please try again."
+          "Failed to delete listing. Please try again.",
       );
     }
   };
@@ -226,9 +228,8 @@ const VendorDashboard = () => {
           .filter((l) => l.originalPrice)
           .reduce(
             (sum, l) =>
-              sum +
-              ((l.originalPrice! - l.price) / l.originalPrice!) * 100,
-            0
+              sum + ((l.originalPrice! - l.price) / l.originalPrice!) * 100,
+            0,
           ) / listings.filter((l) => l.originalPrice).length
       : 0;
 
@@ -273,7 +274,11 @@ const VendorDashboard = () => {
                 </div>
 
                 <div className="space-y-4">
-                  <StatCard label="Total Listings" value={totalListings} index={0} />
+                  <StatCard
+                    label="Total Listings"
+                    value={totalListings}
+                    index={0}
+                  />
                   <StatCard label="Human Food" value={humanListings} index={1}>
                     <p className="text-xs text-gray-400 mt-1">
                       {totalListings > 0
@@ -282,7 +287,11 @@ const VendorDashboard = () => {
                       % of total
                     </p>
                   </StatCard>
-                  <StatCard label="Animal Feed" value={animalListings} index={2}>
+                  <StatCard
+                    label="Animal Feed"
+                    value={animalListings}
+                    index={2}
+                  >
                     <p className="text-xs text-gray-400 mt-1">
                       {totalListings > 0
                         ? Math.round((animalListings / totalListings) * 100)

@@ -145,7 +145,9 @@ const Home = () => {
     try {
       await api.patch(`/listings/${listingId}/pickup`);
       fetchListings();
-      alert("Successfully marked as picked up! Please contact the vendor to arrange pickup.");
+      alert(
+        "Successfully marked as picked up! Use the vendor contact info above to arrange pickup.",
+      );
     } catch (error: any) {
       console.error("Error marking as picked up:", error);
       alert(error.response?.data?.message || "Failed to mark as picked up");
@@ -336,7 +338,9 @@ const Home = () => {
                       index={index}
                       showVendorInfo
                       onAction={handlePickup}
-                      actionLabel={listing.pickedUp ? "Already Picked Up" : "Pickup"}
+                      actionLabel={
+                        listing.pickedUp ? "Already Picked Up" : "Pickup"
+                      }
                       actionDisabled={listing.pickedUp}
                     />
                   ))}

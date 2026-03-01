@@ -127,7 +127,40 @@ const ListingCard = ({
             <span className="font-semibold text-white">Pickup:</span>{" "}
             {listing.pickupTime}
           </div>
-          {(listing.phoneNumber ||
+          {showVendorInfo && listing.vendorId && (
+            <div className="p-3 bg-primary/10 border border-primary/30 rounded-lg">
+              <p className="text-white font-semibold text-xs mb-1">
+                Vendor Contact
+              </p>
+              <p className="text-gray-300 text-xs mb-1">
+                <span className="font-semibold">Name:</span>{" "}
+                {listing.vendorId.name}
+              </p>
+              {listing.vendorId.email && (
+                <p className="text-gray-300 text-xs mb-1">
+                  <span className="font-semibold">Email:</span>{" "}
+                  <a
+                    href={`mailto:${listing.vendorId.email}`}
+                    className="text-primary hover:text-secondary"
+                  >
+                    {listing.vendorId.email}
+                  </a>
+                </p>
+              )}
+              {listing.vendorId.phoneNumber && (
+                <p className="text-gray-300 text-xs">
+                  <span className="font-semibold">Phone:</span>{" "}
+                  <a
+                    href={`tel:${listing.vendorId.phoneNumber}`}
+                    className="text-primary hover:text-secondary font-medium"
+                  >
+                    {listing.vendorId.phoneNumber}
+                  </a>
+                </p>
+              )}
+            </div>
+          )}
+          {!showVendorInfo && (listing.phoneNumber ||
             (listing.vendorId && listing.vendorId.phoneNumber)) && (
             <div className="text-gray-400 break-words">
               <span className="font-semibold text-white">Contact:</span>{" "}
