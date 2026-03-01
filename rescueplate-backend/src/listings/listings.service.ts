@@ -31,6 +31,7 @@ export class ListingsService {
     return await this.listingModel
       .find()
       .populate('vendorId', 'name email phoneNumber')
+      .populate('pickedUpBy', 'name email phoneNumber')
       .exec();
   }
 
