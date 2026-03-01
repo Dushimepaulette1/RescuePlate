@@ -22,6 +22,13 @@ interface Listing {
   image: string;
   phoneNumber?: string;
   pickedUp?: boolean;
+  pickedUpBy?: {
+    _id: string;
+    name: string;
+    email: string;
+    phoneNumber?: string;
+  };
+  pickedUpAt?: string;
   vendorId?: {
     _id: string;
     name: string;

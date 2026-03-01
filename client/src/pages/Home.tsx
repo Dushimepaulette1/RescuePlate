@@ -19,6 +19,13 @@ interface Listing {
   image: string;
   phoneNumber?: string;
   pickedUp?: boolean;
+  pickedUpBy?: {
+    _id: string;
+    name: string;
+    email: string;
+    phoneNumber?: string;
+  };
+  pickedUpAt?: string;
   vendorId: {
     _id: string;
     name: string;
@@ -138,7 +145,7 @@ const Home = () => {
     try {
       await api.patch(`/listings/${listingId}/pickup`);
       fetchListings();
-      alert("Pickup request sent! The vendor will be notified.");
+      alert("Successfully marked as picked up! Please contact the vendor to arrange pickup.");
     } catch (error: any) {
       console.error("Error marking as picked up:", error);
       alert(error.response?.data?.message || "Failed to mark as picked up");

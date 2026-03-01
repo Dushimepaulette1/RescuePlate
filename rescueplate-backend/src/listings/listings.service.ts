@@ -103,8 +103,17 @@ export class ListingsService {
     }
 
     const updatedListing = await this.listingModel
-      .findByIdAndUpdate(id, { pickedUp: true }, { new: true })
+      .findByIdAndUpdate(
+        id,
+        {
+          pickedUp: true,
+          pickedUpBy: userId,
+          pickedUpAt: new Date(),
+        },
+        { new: true },
+      )
       .populate('vendorId', 'name email phoneNumber')
+      .populate('pickedUpBy', 'name email phoneNumber')
       .exec();
 
     return updatedListing!;

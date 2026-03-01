@@ -45,6 +45,15 @@ export class Listing extends Document {
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
+  })
+  pickedUpBy?: mongoose.Types.ObjectId;
+
+  @Prop()
+  pickedUpAt?: Date;
+
+  @Prop({
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
     required: true,
   })
   vendorId!: mongoose.Types.ObjectId;

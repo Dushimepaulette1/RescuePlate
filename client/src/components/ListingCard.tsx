@@ -14,6 +14,13 @@ interface Listing {
   image: string;
   phoneNumber?: string;
   pickedUp?: boolean;
+  pickedUpBy?: {
+    _id: string;
+    name: string;
+    email: string;
+    phoneNumber?: string;
+  };
+  pickedUpAt?: string;
   vendorId?: {
     _id: string;
     name: string;
@@ -130,6 +137,42 @@ const ListingCard = ({
               >
                 {listing.phoneNumber || listing.vendorId?.phoneNumber}
               </a>
+            </div>
+          )}
+          {showActions && listing.pickedUp && listing.pickedUpBy && (
+            <div className="mt-3 p-3 bg-green-500/10 border border-green-500/30 rounded-lg">
+              <p className="text-green-400 font-semibold text-xs mb-1">
+                ✓ Picked Up
+              </p>
+              <p className="text-gray-300 text-xs">
+                <span className="font-semibold">Customer:</span>{" "}
+                {listing.pickedUpBy.name}
+              </p>
+              <p className="text-gray-300 text-xs">
+                <span className="font-semibold">Email:</span>{" "}
+                <a
+                  href={`mailto:${listing.pickedUpBy.email}`}
+                  className="text-primary hover:text-secondary"
+                >
+                  {listing.pickedUpBy.email}
+                </a>
+              </p>
+              {listing.pickedUpBy.phoneNumber && (
+                <p className="text-gray-300 text-xs">
+                  <span className="font-semibold">Phone:</span>{" "}
+                  <a
+                    href={`tel:${listing.pickedUpBy.phoneNumber}`}
+                    className="text-primary hover:text-secondary"
+                  >
+                    {listing.pickedUpBy.phoneNumber}
+                  </a>
+                </p>
+              )}
+              {listing.pickedUpAt && (
+                <p className="text-gray-400 text-xs mt-1">
+                  {new Date(listing.pickedUpAt).toLocaleString()}
+                </p>
+              )}
             </div>
           )}
         </div>
