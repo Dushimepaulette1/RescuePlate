@@ -173,6 +173,7 @@ const ListingForm = ({
           placeholder="+1 (234) 567-8900"
           labelClassName="mb-2"
           className="mb-1"
+          required
         />
         <p className="text-xs text-gray-400 -mt-2">
           For customers to contact you for pickup

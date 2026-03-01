@@ -119,6 +119,11 @@ const VendorDashboard = () => {
       return;
     }
 
+    if (!formData.phoneNumber || !formData.phoneNumber.trim()) {
+      alert("Please provide a contact phone number");
+      return;
+    }
+
     setSubmitting(true);
 
     try {
@@ -146,10 +151,15 @@ const VendorDashboard = () => {
     e.preventDefault();
     if (!editingListing) return;
 
+    if (!formData.phoneNumber || !formData.phoneNumber.trim()) {
+      alert("Please provide a contact phone number");
+      return;
+    }
+
     setSubmitting(true);
 
     try {
-      const response = await api.put(`/listings/${editingListing._id}`, {
+      const response = await api.patch(`/listings/${editingListing._id}`, {
         ...formData,
         price: parseFloat(formData.price),
         originalPrice: formData.originalPrice

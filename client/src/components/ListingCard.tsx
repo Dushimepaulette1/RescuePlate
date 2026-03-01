@@ -160,18 +160,19 @@ const ListingCard = ({
               )}
             </div>
           )}
-          {!showVendorInfo && (listing.phoneNumber ||
-            (listing.vendorId && listing.vendorId.phoneNumber)) && (
-            <div className="text-gray-400 break-words">
-              <span className="font-semibold text-white">Contact:</span>{" "}
-              <a
-                href={`tel:${listing.phoneNumber || listing.vendorId?.phoneNumber}`}
-                className="text-primary hover:text-secondary transition"
-              >
-                {listing.phoneNumber || listing.vendorId?.phoneNumber}
-              </a>
-            </div>
-          )}
+          {!showVendorInfo &&
+            (listing.phoneNumber ||
+              (listing.vendorId && listing.vendorId.phoneNumber)) && (
+              <div className="text-gray-400 break-words">
+                <span className="font-semibold text-white">Contact:</span>{" "}
+                <a
+                  href={`tel:${listing.phoneNumber || listing.vendorId?.phoneNumber}`}
+                  className="text-primary hover:text-secondary transition"
+                >
+                  {listing.phoneNumber || listing.vendorId?.phoneNumber}
+                </a>
+              </div>
+            )}
           {showActions && listing.pickedUp && listing.pickedUpBy && (
             <div className="mt-3 p-3 bg-green-500/10 border border-green-500/30 rounded-lg">
               <p className="text-green-400 font-semibold text-xs mb-1">
