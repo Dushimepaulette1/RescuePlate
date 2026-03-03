@@ -175,9 +175,6 @@ const ListingForm = ({
           className="mb-1"
           required
         />
-        <p className="text-xs text-gray-400 -mt-2">
-          Rwandan phone number for pickup coordination
-        </p>
       </div>
 
       <div className="flex gap-4">

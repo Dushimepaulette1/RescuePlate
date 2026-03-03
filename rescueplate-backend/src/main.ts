@@ -10,7 +10,12 @@ async function bootstrap() {
   app.use(require('body-parser').urlencoded({ limit: '10mb', extended: true }));
 
   app.enableCors();
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    }),
+  );
 
   const config = new DocumentBuilder()
     .setTitle('RescuePlate API')
